@@ -3,9 +3,20 @@ import java.awt.Color;
 public class Block {
 
     private byte walls; // nibble encoded NESW encoded (top, right, bottom, left)
+    private Color baseColor;
+    private boolean occupied;
 
     public Block() {
 
+        this.walls = 0;
+        this.baseColor = null;
+        this.occupied = false;
+    }
+
+    public Block(Color baseColor) {
+        this.walls = 0;
+        this.baseColor = baseColor;
+        this.occupied = true;
     }
 
     public boolean[] getWalls() {
@@ -29,10 +40,10 @@ public class Block {
         this.walls = walls;
     }
 
-    public void setWall(int wall, boolean exists) {
+    public void setWall(byte wall, boolean setWall) {
 
         boolean[] wallState = getWalls();
-        wallState[wall] = exists;
+        wallState[wall] = setWall;
         this.walls = convertWalls(wallState);
 
     }
@@ -46,6 +57,22 @@ public class Block {
 
         return wallsOut;
 
+    }
+
+    public Color getBaseColor() {
+        return baseColor;
+    }
+
+    public boolean isOccupied() {
+        return occupied;
+    }
+
+    public void setOccupied() {
+        this.occupied = true;
+    }
+
+    public void setUnoccupied() {
+        this.occupied = false;
     }
 
 }

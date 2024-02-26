@@ -3,10 +3,10 @@ import java.awt.Color;
 public class Blockade {
 
     // Regular grid: 11x14 squares, 10x13 lines
-    // pieces start on (assuming (0,0) is bottom left)
+    // pieces start on (assuming (0,0) is top right)
     // zero based positioning
-    // P1(Red): (3,3), (3,7)
-    // P2(Yellow): (10, 3), (10, 7)
+    // P2(Yellow): (3,3), (3,7)
+    // P1(Red): (10, 3), (10, 7)
 
     // Movement: 2 orthogonal, 1 diagonal
 
