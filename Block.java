@@ -30,8 +30,8 @@ public class Block {
         return wallOut;
     }
 
-    public boolean getWall(int wall)/* 0 = N, 1 = E, 2 = S, 3 = W */ {
-
+    public boolean getWall(int wall)/* 0 = N, 1 = E, 2 = S, 3 = W. -1 to bypass*/ {
+        if
         return (walls / ((int) Math.pow(2, wall)) == 1);
 
     }
