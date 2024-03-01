@@ -30,8 +30,9 @@ public class Block {
         return wallOut;
     }
 
-    public boolean getWall(int wall)/* 0 = N, 1 = E, 2 = S, 3 = W. -1 to bypass*/ {
-        if
+    public boolean getWall(int wall)/* 0 = N, 1 = E, 2 = S, 3 = W. -1 to bypass */ {
+        if (wall == -1)
+            return false;
         return (walls / ((int) Math.pow(2, wall)) == 1);
 
     }
@@ -73,6 +74,40 @@ public class Block {
 
     public void setUnoccupied() {
         this.occupied = false;
+    }
+
+    // Get each wall
+    public boolean getNorthWall() {
+        return getWall(0);
+    }
+
+    public boolean getEastWall() {
+        return getWall(1);
+    }
+
+    public boolean getSouthWall() {
+        return getWall(2);
+    }
+
+    public boolean getWestWall() {
+        return getWall(3);
+    }
+
+    // set each wall
+    public void setNorthWall(boolean wall) {
+        setWall((byte) 0, wall);
+    }
+
+    public void setEastWall(boolean wall) {
+        setWall((byte) 1, wall);
+    }
+
+    public void setSouthWall(boolean wall) {
+        setWall((byte) 2, wall);
+    }
+
+    public void setWestWall(boolean wall) {
+        setWall((byte) 3, wall);
     }
 
 }
