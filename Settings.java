@@ -3,7 +3,7 @@ import java.awt.Color;
 public class Settings {
 
     // GUI Settings
-    public class GUISettings {
+    public static class GUISettings {
         public static final int GRID_WIDTH = 14;
         public static final int GRID_HEIGHT = 11;
 
@@ -20,7 +20,7 @@ public class Settings {
 
     // CellPanel Settings
 
-    public class CellSettings {
+    public static class CellSettings {
         public static final short CELL_PADDING = 2;
         public static final short CELL_PIECE_SIZE = 36;
         public static final Color CELL_HORIZONTAL_WALL_COLOR = new Color(2662480);

@@ -9,6 +9,10 @@ class CellPanel extends JPanel {
 
     private Block cellBlock;
     private Color pieceColor;
+    private CellPanel northCell;
+    private CellPanel eastCell;
+    private CellPanel southCell;
+    private CellPanel westCell;
 
     public CellPanel(Block block) {
         cellBlock = block;
@@ -17,6 +21,69 @@ class CellPanel extends JPanel {
 
     public void setPieceColor(Color color) {
         pieceColor = color;
+    }
+
+    public void setCells(CellPanel north, CellPanel east, CellPanel south, CellPanel west){
+        northCell = north;
+        eastCell = east;
+        southCell = south;
+        westCell = west;
+    }
+
+    /**
+     * @return the northCell
+     */
+    public CellPanel getNorthCell() {
+        return northCell;
+    }
+
+    /**
+     * @return the eastCell
+     */
+    public CellPanel getEastCell() {
+        return eastCell;
+    }
+
+    /**
+     * @return the westCell
+     */
+    public CellPanel getWestCell() {
+        return westCell;
+    }
+
+    /**
+     * @return the southCell
+     */
+    public CellPanel getSouthCell() {
+        return southCell;
+    }
+
+    /**
+     * @param northCell the northCell to set
+     */
+    public void setNorthCell(CellPanel northCell) {
+        this.northCell = northCell;
+    }
+
+    /**
+     * @param eastCell the eastCell to set
+     */
+    public void setEastCell(CellPanel eastCell) {
+        this.eastCell = eastCell;
+    }
+
+    /**
+     * @param southCell the southCell to set
+     */
+    public void setSouthCell(CellPanel southCell) {
+        this.southCell = southCell;
+    }
+
+    /**
+     * @param westCell the westCell to set
+     */
+    public void setWestCell(CellPanel westCell) {
+        this.westCell = westCell;
     }
 
     @Override
@@ -42,8 +109,6 @@ class CellPanel extends JPanel {
         if (cellBlock.getSouthWall())
             g.fillRect(getHeight() - Settings.CellSettings.CELL_PADDING, 0, getWidth(),
                     Settings.CellSettings.CELL_PADDING);
-
-        System.out.println(cellBlock.getBaseColor());
 
         if (cellBlock.getBaseColor() != null) {
             g.setColor(cellBlock.getBaseColor());

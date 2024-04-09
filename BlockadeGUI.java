@@ -1,5 +1,12 @@
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class BlockadeGUI extends JFrame {
 
@@ -42,6 +49,25 @@ public class BlockadeGUI extends JFrame {
             }
         }
 
+        for (int row = 0; row < Settings.GUISettings.GRID_HEIGHT; row++) {
+            for (int col = 0; col < Settings.GUISettings.GRID_WIDTH; col++) {
+                CellPanel chosenCellPanel = GAME_BOARD[col][row];
+
+                if(col>0)
+                    chosenCellPanel.setWestCell(GAME_BOARD[col-1][row]);
+
+                if(col < Settings.GUISettings.GRID_WIDTH-1)
+                    chosenCellPanel.setEastCell(GAME_BOARD[col+1][row]);
+
+                if(row > 0)
+                    chosenCellPanel.setNorthCell(GAME_BOARD[col][row-1]);
+
+                if(row < Settings.GUISettings.GRID_HEIGHT-1)
+                    chosenCellPanel.setSouthCell(GAME_BOARD[col][row+1]);
+
+            }
+        }
+
         mainPanel.add(gridPanel, BorderLayout.CENTER);
 
         JPanel player1WallsPanel = new JPanel(new GridLayout(2, 1));
@@ -74,6 +100,16 @@ public class BlockadeGUI extends JFrame {
         mainPanel.add(player2WallsPanel, BorderLayout.EAST);
 
         add(mainPanel);
+
+        //TODO: IMPLEMENT MOUSE LISTENER
+        //needs to be able to detect 2 different clicks, maybe click and drag
+        //will need to mainly get the panel selected, so see if we need to add one to CellPanel as well.
+        mainPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent me){
+
+            }
+        });
 
         pack();
         setLocationRelativeTo(null); // Center the frame on the screen
