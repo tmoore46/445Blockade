@@ -22,6 +22,9 @@ public class BlockadeGUI extends JFrame {
     private int player2HorizontalWalls = 9;
     private int player2VerticalWalls = 9;
 
+    public CellPanel firstClickedCellPanel = null;
+    public CellPanel secondClickedCellPanel = null;
+
     public BlockadeGUI() {
         setTitle("Blockade");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,17 +56,17 @@ public class BlockadeGUI extends JFrame {
             for (int col = 0; col < Settings.GUISettings.GRID_WIDTH; col++) {
                 CellPanel chosenCellPanel = GAME_BOARD[col][row];
 
-                if(col>0)
-                    chosenCellPanel.setWestCell(GAME_BOARD[col-1][row]);
+                if (col > 0)
+                    chosenCellPanel.setWestCell(GAME_BOARD[col - 1][row]);
 
-                if(col < Settings.GUISettings.GRID_WIDTH-1)
-                    chosenCellPanel.setEastCell(GAME_BOARD[col+1][row]);
+                if (col < Settings.GUISettings.GRID_WIDTH - 1)
+                    chosenCellPanel.setEastCell(GAME_BOARD[col + 1][row]);
 
-                if(row > 0)
-                    chosenCellPanel.setNorthCell(GAME_BOARD[col][row-1]);
+                if (row > 0)
+                    chosenCellPanel.setNorthCell(GAME_BOARD[col][row - 1]);
 
-                if(row < Settings.GUISettings.GRID_HEIGHT-1)
-                    chosenCellPanel.setSouthCell(GAME_BOARD[col][row+1]);
+                if (row < Settings.GUISettings.GRID_HEIGHT - 1)
+                    chosenCellPanel.setSouthCell(GAME_BOARD[col][row + 1]);
 
             }
         }
@@ -101,12 +104,44 @@ public class BlockadeGUI extends JFrame {
 
         add(mainPanel);
 
-        //TODO: IMPLEMENT MOUSE LISTENER
-        //needs to be able to detect 2 different clicks, maybe click and drag
-        //will need to mainly get the panel selected, so see if we need to add one to CellPanel as well.
-        mainPanel.addMouseListener(new MouseAdapter() {
+        // TODO: IMPLEMENT MOUSE LISTENER
+        // needs to be able to detect 2 different clicks, maybe click and drag
+        // will need to mainly get the panel selected, so see if we need to add one to
+        // CellPanel as well.
+        // https://stackoverflow.com/a/55957219
+        // this should help
+        gridPanel.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent me){
+            public void mouseClicked(MouseEvent me) {
+
+                JPanel selectedPanel;
+
+                Object clickedObject = me.getSource();
+
+                // handle all the cell panel stuff here
+                if (clickedObject instanceof JPanel) {
+                    selectedPanel = (JPanel) clickedObject;
+                    CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(getMousePosition());
+                    System.out.println(clickedCellPanel);
+                    if (firstClickedCellPanel == null)
+                        firstClickedCellPanel = clickedCellPanel;
+                    else
+                        secondClickedCellPanel = clickedCellPanel;
+
+                    if (firstClickedCellPanel != null && secondClickedCellPanel != null) {
+                        firstClickedCellPanel = null;
+                        secondClickedCellPanel = null;
+                    }
+
+                    System.out.println(clickedCellPanel.reachablePrintout());
+                    for (int row = 0; row < Settings.GUISettings.GRID_HEIGHT; row++) {
+                        for (int col = 0; col < Settings.GUISettings.GRID_WIDTH; col++) {
+                            if (GAME_BOARD[col][row].equals(clickedCellPanel)) {
+                                System.out.printf("(X,Y) : (%d, %d)\n", col, row);
+                            }
+                        }
+                    }
+                }
 
             }
         });

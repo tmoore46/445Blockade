@@ -23,11 +23,101 @@ class CellPanel extends JPanel {
         pieceColor = color;
     }
 
-    public void setCells(CellPanel north, CellPanel east, CellPanel south, CellPanel west){
+    public void setCells(CellPanel north, CellPanel east, CellPanel south, CellPanel west) {
         northCell = north;
         eastCell = east;
         southCell = south;
         westCell = west;
+    }
+
+    public String reachablePrintout() {
+        int output = reachableCells();
+        return Integer.toBinaryString(output);
+    }
+
+    public int reachableCells() {
+
+        /*
+         * ASCII Drawing of the movement validity
+         * N means unreachable
+         * X means base
+         * This refers to the bit manipulated
+         * A: Bit 9 accessed by 1, bit 10 accessed by 3
+         * B: Bit 11 accessed by 3, bit 12 accessed by 5
+         * C: Bit 13 accessed by 5, bit 14 accessed by 7
+         * D: Bit 15 accessed by 7, bit 16 accessed by 1
+         * 
+         * N | N | 1 | N | N
+         * N | D | 0 | A | N
+         * 7 | 6 | X | 2 | 3
+         * N | C | 4 | B | N
+         * N | N | 5 | N | N
+         * 
+         */
+        int movements = 0;
+        // Northern Tracking
+        if (!cellBlock.getNorthWall()) {
+            movements += 1;
+            if (!northCell.getBlock().getNorthWall()) {
+                movements += 2;
+            }
+            if (!northCell.getBlock().getEastWall()) {
+                movements += 256;
+            }
+            if (!northCell.getBlock().getWestWall()) {
+                movements += 32768;
+            }
+
+        }
+
+        // Eastern Tracking
+        if (!cellBlock.getEastWall()) {
+            movements += 4;
+            if (!eastCell.getBlock().getEastWall()) {
+                movements += 8;
+            }
+            if (!eastCell.getBlock().getNorthWall()) {
+                movements += 512;
+            }
+            if (!eastCell.getBlock().getSouthWall()) {
+                movements += 1024;
+            }
+        }
+
+        // Southern Tracking
+        if (!cellBlock.getSouthWall()) {
+            movements += 16;
+            if (!southCell.getBlock().getSouthWall()) {
+                movements += 32;
+            }
+            if (!southCell.getBlock().getEastWall()) {
+                movements += 2048;
+            }
+            if (!southCell.getBlock().getWestWall()) {
+                movements += 4096;
+            }
+
+        }
+
+        // Western Tracking
+        if (!cellBlock.getWestWall()) {
+            movements += 64;
+            if (!westCell.getBlock().getWestWall()) {
+                movements += 128;
+            }
+            if (!westCell.getBlock().getNorthWall()) {
+                movements += 16384;
+            }
+            if (!westCell.getBlock().getSouthWall()) {
+                movements += 8192;
+            }
+        }
+
+        return movements;
+    }
+
+    public Block getBlock() {
+        return cellBlock;
     }
 
     /**
