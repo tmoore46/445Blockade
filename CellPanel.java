@@ -32,7 +32,7 @@ class CellPanel extends JPanel {
 
     public String reachablePrintout() {
         int output = reachableCells();
-        return Integer.toBinaryString(output);
+        return String.format("%16s", Integer.toBinaryString(output)).replace(" ", "0");
     }
 
     public int reachableCells() {
