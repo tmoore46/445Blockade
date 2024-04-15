@@ -14,6 +14,12 @@ class CellPanel extends JPanel {
     private CellPanel southCell;
     private CellPanel westCell;
 
+    public static final short CELL_PADDING = 2;
+    public static final short CELL_PIECE_SIZE = 36;
+    public static final Color CELL_HORIZONTAL_WALL_COLOR = new Color(2662480);
+    public static final Color CELL_VERTICAL_WALL_COLOR = new Color(2642080);
+    public static final short CELL_SIZE = 50;
+
     public CellPanel(Block block) {
         cellBlock = block;
         setBackground(Color.GRAY);
@@ -46,13 +52,13 @@ class CellPanel extends JPanel {
          * B: Bit 11 accessed by 3, bit 12 accessed by 5
          * C: Bit 13 accessed by 5, bit 14 accessed by 7
          * D: Bit 15 accessed by 7, bit 16 accessed by 1
-         * 
+         *
          * N | N | 1 | N | N
          * N | D | 0 | A | N
          * 7 | 6 | X | 2 | 3
          * N | C | 4 | B | N
          * N | N | 5 | N | N
-         * 
+         *
          */
         int movements = 0;
         // Northern Tracking
@@ -181,45 +187,45 @@ class CellPanel extends JPanel {
         super.paintComponent(g);
 
         g.setColor(Color.BLACK);
-        g.fillRect(Settings.CellSettings.CELL_PADDING, Settings.CellSettings.CELL_PADDING,
-                getWidth() - (Settings.CellSettings.CELL_PADDING * 2),
-                getHeight() - (Settings.CellSettings.CELL_PADDING * 2));
+        g.fillRect(CELL_PADDING, CELL_PADDING,
+                getWidth() - (CELL_PADDING * 2),
+                getHeight() - (CELL_PADDING * 2));
 
         // paint vertical walls on the left and right
-        g.setColor(Settings.CellSettings.CELL_VERTICAL_WALL_COLOR);
+        g.setColor(CELL_VERTICAL_WALL_COLOR);
         if (cellBlock.getEastWall())
-            g.fillRect(getWidth() - Settings.CellSettings.CELL_PADDING, 0, 2, getHeight());
+            g.fillRect(getWidth() - CELL_PADDING, 0, 2, getHeight());
         if (cellBlock.getWestWall())
-            g.fillRect(0, 0, Settings.CellSettings.CELL_PADDING, getHeight());
+            g.fillRect(0, 0, CELL_PADDING, getHeight());
 
         // Paint The horizontal walls on the top and bottom
-        g.setColor(Settings.CellSettings.CELL_HORIZONTAL_WALL_COLOR);
+        g.setColor(CELL_HORIZONTAL_WALL_COLOR);
         if (cellBlock.getNorthWall())
-            g.fillRect(0, 0, getWidth(), Settings.CellSettings.CELL_PADDING);
+            g.fillRect(0, 0, getWidth(), CELL_PADDING);
         if (cellBlock.getSouthWall())
-            g.fillRect(getHeight() - Settings.CellSettings.CELL_PADDING, 0, getWidth(),
-                    Settings.CellSettings.CELL_PADDING);
+            g.fillRect(getHeight() - CELL_PADDING, 0, getWidth(),
+                    CELL_PADDING);
 
         if (cellBlock.getBaseColor() != null) {
             g.setColor(cellBlock.getBaseColor());
-            g.fillRect((getWidth() / 2) - Settings.CellSettings.CELL_PADDING,
-                    ((getHeight() / 2) - (Settings.CellSettings.CELL_PIECE_SIZE / 2)),
-                    (Settings.CellSettings.CELL_PADDING * 2), Settings.CellSettings.CELL_PIECE_SIZE);
-            g.fillRect(((getWidth() / 2) - (Settings.CellSettings.CELL_PIECE_SIZE / 2)),
-                    (getHeight() / 2) - Settings.CellSettings.CELL_PADDING,
-                    Settings.CellSettings.CELL_PIECE_SIZE, (Settings.CellSettings.CELL_PADDING * 2));
+            g.fillRect((getWidth() / 2) - CELL_PADDING,
+                    ((getHeight() / 2) - (CELL_PIECE_SIZE / 2)),
+                    (CELL_PADDING * 2), CELL_PIECE_SIZE);
+            g.fillRect(((getWidth() / 2) - (CELL_PIECE_SIZE / 2)),
+                    (getHeight() / 2) - CELL_PADDING,
+                    CELL_PIECE_SIZE, (CELL_PADDING * 2));
         }
 
         g.setColor(pieceColor);
         if (cellBlock.isOccupied())
-            g.fillOval((getWidth() - Settings.CellSettings.CELL_PIECE_SIZE) / 2,
-                    (getWidth() - Settings.CellSettings.CELL_PIECE_SIZE) / 2,
-                    Settings.CellSettings.CELL_PIECE_SIZE, Settings.CellSettings.CELL_PIECE_SIZE);
+            g.fillOval((getWidth() - CELL_PIECE_SIZE) / 2,
+                    (getWidth() - CELL_PIECE_SIZE) / 2,
+                    CELL_PIECE_SIZE, CELL_PIECE_SIZE);
 
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(Settings.CellSettings.CELL_SIZE, Settings.CellSettings.CELL_SIZE);
+        return new Dimension(CELL_SIZE, CELL_SIZE);
     }
 }

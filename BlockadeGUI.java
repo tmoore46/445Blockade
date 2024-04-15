@@ -1,5 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Color;
+
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -10,7 +13,7 @@ import javax.swing.SwingUtilities;
 
 public class BlockadeGUI extends JFrame {
 
-    private CellPanel[][] GAME_BOARD = new CellPanel[Settings.GUISettings.GRID_WIDTH][Settings.GUISettings.GRID_HEIGHT];
+
 
     private JLabel player1HorizontalWallsLabel;
     private JLabel player1VerticalWallsLabel;
@@ -25,6 +28,20 @@ public class BlockadeGUI extends JFrame {
     public CellPanel firstClickedCellPanel = null;
     public CellPanel secondClickedCellPanel = null;
 
+    public static final int GRID_WIDTH = 14;
+    public static final int GRID_HEIGHT = 11;
+
+    public static final Color PLAYER1_BGCOLOR = new Color(8323072);
+    public static final Color PLAYER2_BGCOLOR = new Color(11053056);
+
+    public static final Color PLAYER1_TEXT_COLOR = new Color(10724259);
+    public static final Color PLAYER2_TEXT_COLOR = new Color(2697513);
+
+    public static final String HORIZONTAL_TEXT = "Horizontal Walls: ";
+    public static final String VERTICAL_TEXT = "Vertical Walls: ";
+
+    private CellPanel[][] GAME_BOARD = new CellPanel[GRID_WIDTH][GRID_HEIGHT];
+
     public BlockadeGUI() {
         setTitle("Blockade");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,16 +50,16 @@ public class BlockadeGUI extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
 
         JPanel gridPanel = new JPanel(
-                new GridLayout(Settings.GUISettings.GRID_HEIGHT, Settings.GUISettings.GRID_WIDTH));
+                new GridLayout(GRID_HEIGHT, GRID_WIDTH));
 
-        for (int row = 0; row < Settings.GUISettings.GRID_HEIGHT; row++) {
-            for (int col = 0; col < Settings.GUISettings.GRID_WIDTH; col++) {
+        for (int row = 0; row < GRID_HEIGHT; row++) {
+            for (int col = 0; col < GRID_WIDTH; col++) {
                 CellPanel cellPanel;
                 if (col == 3 && (row == 3 || row == 7))
-                    cellPanel = new CellPanel(new Block(Settings.GUISettings.PLAYER1_BGCOLOR));
+                    cellPanel = new CellPanel(new Block(PLAYER1_BGCOLOR));
 
                 else if (col == 10 && (row == 3 || row == 7))
-                    cellPanel = new CellPanel(new Block(Settings.GUISettings.PLAYER2_BGCOLOR));
+                    cellPanel = new CellPanel(new Block(PLAYER2_BGCOLOR));
 
                 else
                     cellPanel = new CellPanel(new Block());
@@ -52,20 +69,20 @@ public class BlockadeGUI extends JFrame {
             }
         }
 
-        for (int row = 0; row < Settings.GUISettings.GRID_HEIGHT; row++) {
-            for (int col = 0; col < Settings.GUISettings.GRID_WIDTH; col++) {
+        for (int row = 0; row < GRID_HEIGHT; row++) {
+            for (int col = 0; col < GRID_WIDTH; col++) {
                 CellPanel chosenCellPanel = GAME_BOARD[col][row];
 
                 if (col > 0)
                     chosenCellPanel.setWestCell(GAME_BOARD[col - 1][row]);
 
-                if (col < Settings.GUISettings.GRID_WIDTH - 1)
+                if (col < GRID_WIDTH - 1)
                     chosenCellPanel.setEastCell(GAME_BOARD[col + 1][row]);
 
                 if (row > 0)
                     chosenCellPanel.setNorthCell(GAME_BOARD[col][row - 1]);
 
-                if (row < Settings.GUISettings.GRID_HEIGHT - 1)
+                if (row < GRID_HEIGHT - 1)
                     chosenCellPanel.setSouthCell(GAME_BOARD[col][row + 1]);
 
             }
@@ -75,28 +92,28 @@ public class BlockadeGUI extends JFrame {
 
         JPanel player1WallsPanel = new JPanel(new GridLayout(2, 1));
 
-        player1HorizontalWallsLabel = new JLabel(Settings.GUISettings.HORIZONTAL_TEXT + player1HorizontalWalls);
-        player1VerticalWallsLabel = new JLabel(Settings.GUISettings.VERTICAL_TEXT + player1VerticalWalls);
+        player1HorizontalWallsLabel = new JLabel(HORIZONTAL_TEXT + player1HorizontalWalls);
+        player1VerticalWallsLabel = new JLabel(VERTICAL_TEXT + player1VerticalWalls);
 
-        player1HorizontalWallsLabel.setForeground(Settings.GUISettings.PLAYER1_TEXT_COLOR);
-        player1VerticalWallsLabel.setForeground(Settings.GUISettings.PLAYER1_TEXT_COLOR);
+        player1HorizontalWallsLabel.setForeground(PLAYER1_TEXT_COLOR);
+        player1VerticalWallsLabel.setForeground(PLAYER1_TEXT_COLOR);
 
         player1WallsPanel.add(player1HorizontalWallsLabel);
         player1WallsPanel.add(player1VerticalWallsLabel);
 
         JPanel player2WallsPanel = new JPanel(new GridLayout(2, 1));
 
-        player2HorizontalWallsLabel = new JLabel(Settings.GUISettings.HORIZONTAL_TEXT + player2HorizontalWalls);
-        player2VerticalWallsLabel = new JLabel(Settings.GUISettings.VERTICAL_TEXT + player2VerticalWalls);
+        player2HorizontalWallsLabel = new JLabel(HORIZONTAL_TEXT + player2HorizontalWalls);
+        player2VerticalWallsLabel = new JLabel(VERTICAL_TEXT + player2VerticalWalls);
 
-        player2HorizontalWallsLabel.setForeground(Settings.GUISettings.PLAYER2_TEXT_COLOR);
-        player2VerticalWallsLabel.setForeground(Settings.GUISettings.PLAYER2_TEXT_COLOR);
+        player2HorizontalWallsLabel.setForeground(PLAYER2_TEXT_COLOR);
+        player2VerticalWallsLabel.setForeground(PLAYER2_TEXT_COLOR);
 
         player2WallsPanel.add(player2HorizontalWallsLabel);
         player2WallsPanel.add(player2VerticalWallsLabel);
 
-        player1WallsPanel.setBackground(Settings.GUISettings.PLAYER1_BGCOLOR);
-        player2WallsPanel.setBackground(Settings.GUISettings.PLAYER2_BGCOLOR);
+        player1WallsPanel.setBackground(PLAYER1_BGCOLOR);
+        player2WallsPanel.setBackground(PLAYER2_BGCOLOR);
 
         mainPanel.add(player1WallsPanel, BorderLayout.WEST);
 
@@ -134,8 +151,8 @@ public class BlockadeGUI extends JFrame {
                     }
 
                     System.out.println(clickedCellPanel.reachablePrintout());
-                    for (int row = 0; row < Settings.GUISettings.GRID_HEIGHT; row++) {
-                        for (int col = 0; col < Settings.GUISettings.GRID_WIDTH; col++) {
+                    for (int row = 0; row < GRID_HEIGHT; row++) {
+                        for (int col = 0; col < GRID_WIDTH; col++) {
                             if (GAME_BOARD[col][row].equals(clickedCellPanel)) {
                                 System.out.printf("(X,Y) : (%d, %d)\n", col, row);
                             }
@@ -153,22 +170,22 @@ public class BlockadeGUI extends JFrame {
 
     public void updatePlayer1HorizontalWalls(int newWalls) {
         player1HorizontalWalls = newWalls;
-        player1HorizontalWallsLabel.setText(Settings.GUISettings.HORIZONTAL_TEXT + player1HorizontalWalls);
+        player1HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player1HorizontalWalls);
     }
 
     public void updatePlayer1VerticalWalls(int newWalls) {
         player1VerticalWalls = newWalls;
-        player1VerticalWallsLabel.setText(Settings.GUISettings.VERTICAL_TEXT + player1VerticalWalls);
+        player1VerticalWallsLabel.setText(VERTICAL_TEXT + player1VerticalWalls);
     }
 
     public void updatePlayer2HorizontalWalls(int newWalls) {
         player2HorizontalWalls = newWalls;
-        player2HorizontalWallsLabel.setText(Settings.GUISettings.HORIZONTAL_TEXT + player2HorizontalWalls);
+        player2HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player2HorizontalWalls);
     }
 
     public void updatePlayer2VerticalWalls(int newWalls) {
         player2VerticalWalls = newWalls;
-        player2VerticalWallsLabel.setText(Settings.GUISettings.VERTICAL_TEXT + player2VerticalWalls);
+        player2VerticalWallsLabel.setText(VERTICAL_TEXT + player2VerticalWalls);
     }
 
     public static void main(String[] args) {
