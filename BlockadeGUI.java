@@ -2,7 +2,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Color;
 
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -12,8 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class BlockadeGUI extends JFrame {
-
-
 
     private JLabel player1HorizontalWallsLabel;
     private JLabel player1VerticalWallsLabel;
@@ -56,13 +53,13 @@ public class BlockadeGUI extends JFrame {
             for (int col = 0; col < GRID_WIDTH; col++) {
                 CellPanel cellPanel;
                 if (col == 3 && (row == 3 || row == 7))
-                    cellPanel = new CellPanel(new Block(PLAYER1_BGCOLOR));
+                    cellPanel = new CellPanel(new Block(PLAYER1_BGCOLOR), col, row);
 
                 else if (col == 10 && (row == 3 || row == 7))
-                    cellPanel = new CellPanel(new Block(PLAYER2_BGCOLOR));
+                    cellPanel = new CellPanel(new Block(PLAYER2_BGCOLOR), col, row);
 
                 else
-                    cellPanel = new CellPanel(new Block());
+                    cellPanel = new CellPanel(new Block(), col, row);
 
                 GAME_BOARD[col][row] = cellPanel;
                 gridPanel.add(cellPanel);
@@ -86,6 +83,16 @@ public class BlockadeGUI extends JFrame {
                     chosenCellPanel.setSouthCell(GAME_BOARD[col][row + 1]);
 
             }
+        }
+
+        for (int row = 0; row < GRID_HEIGHT; row++) {
+            GAME_BOARD[0][row].getBlock().setWestWall(true);
+            GAME_BOARD[GRID_WIDTH - 1][row].getBlock().setEastWall(true);
+        }
+
+        for (int col = 0; col < GRID_WIDTH; col++) {
+            GAME_BOARD[col][0].getBlock().setNorthWall(true);
+            GAME_BOARD[col][GRID_HEIGHT - 1].getBlock().setSouthWall(true);
         }
 
         mainPanel.add(gridPanel, BorderLayout.CENTER);
@@ -138,7 +145,7 @@ public class BlockadeGUI extends JFrame {
                 // handle all the cell panel stuff here
                 if (clickedObject instanceof JPanel) {
                     selectedPanel = (JPanel) clickedObject;
-                    CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(getMousePosition());
+                    CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(me.getPoint());
                     System.out.println(clickedCellPanel);
                     if (firstClickedCellPanel == null)
                         firstClickedCellPanel = clickedCellPanel;
@@ -150,16 +157,8 @@ public class BlockadeGUI extends JFrame {
                         secondClickedCellPanel = null;
                     }
 
-                    System.out.println(clickedCellPanel.reachablePrintout());
-                    for (int row = 0; row < GRID_HEIGHT; row++) {
-                        for (int col = 0; col < GRID_WIDTH; col++) {
-                            if (GAME_BOARD[col][row].equals(clickedCellPanel)) {
-                                System.out.printf("(X,Y) : (%d, %d)\n", col, row);
-                            }
-                        }
-                    }
+                    System.err.println(clickedCellPanel.reachablePrintout());
                 }
-
             }
         });
 
@@ -189,7 +188,9 @@ public class BlockadeGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(BlockadeGUI::new);
+
+        BlockadeGUI main = new BlockadeGUI();
+        // SwingUtilities.invokeLater(BlockadeGUI::new);
 
     }
 

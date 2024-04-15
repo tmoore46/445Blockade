@@ -7,6 +7,9 @@ import javax.swing.JPanel;
 // Custom JPanel for cells
 class CellPanel extends JPanel {
 
+    private int posX;
+    private int posY;
+
     private Block cellBlock;
     private Color pieceColor;
     private CellPanel northCell;
@@ -14,14 +17,16 @@ class CellPanel extends JPanel {
     private CellPanel southCell;
     private CellPanel westCell;
 
-    public static final short CELL_PADDING = 2;
-    public static final short CELL_PIECE_SIZE = 36;
+    public static final short CELL_PADDING = 5;
+    public static final short CELL_PIECE_SIZE = 30;
     public static final Color CELL_HORIZONTAL_WALL_COLOR = new Color(2662480);
     public static final Color CELL_VERTICAL_WALL_COLOR = new Color(2642080);
     public static final short CELL_SIZE = 50;
 
-    public CellPanel(Block block) {
+    public CellPanel(Block block, int x, int y) {
         cellBlock = block;
+        posX = x;
+        posY = y;
         setBackground(Color.GRAY);
     }
 
@@ -62,51 +67,51 @@ class CellPanel extends JPanel {
          */
         int movements = 0;
         // Northern Tracking
-        if (!cellBlock.getNorthWall()) {
+        if (!cellBlock.getNorthWall() && northCell != null) {
             movements += 1;
-            if (!northCell.getBlock().getNorthWall()) {
+            if ((!northCell.getBlock().getNorthWall())) {
                 movements += 2;
             }
-            if (!northCell.getBlock().getEastWall()) {
+            if ((!northCell.getBlock().getEastWall())) {
                 movements += 256;
             }
-            if (!northCell.getBlock().getWestWall()) {
+            if ((!northCell.getBlock().getWestWall())) {
                 movements += 32768;
             }
 
         }
 
         // Eastern Tracking
-        if (!cellBlock.getEastWall()) {
+        if (!cellBlock.getEastWall() && eastCell != null) {
             movements += 4;
-            if (!eastCell.getBlock().getEastWall()) {
+            if ((!eastCell.getBlock().getEastWall())) {
                 movements += 8;
             }
-            if (!eastCell.getBlock().getNorthWall()) {
+            if ((!eastCell.getBlock().getNorthWall())) {
                 movements += 512;
             }
-            if (!eastCell.getBlock().getSouthWall()) {
+            if ((!eastCell.getBlock().getSouthWall())) {
                 movements += 1024;
             }
         }
 
         // Southern Tracking
-        if (!cellBlock.getSouthWall()) {
+        if (!cellBlock.getSouthWall() && southCell != null) {
             movements += 16;
-            if (!southCell.getBlock().getSouthWall()) {
+            if ((!southCell.getBlock().getSouthWall())) {
                 movements += 32;
             }
-            if (!southCell.getBlock().getEastWall()) {
+            if ((!southCell.getBlock().getEastWall())) {
                 movements += 2048;
             }
-            if (!southCell.getBlock().getWestWall()) {
+            if ((!southCell.getBlock().getWestWall())) {
                 movements += 4096;
             }
 
         }
 
         // Western Tracking
-        if (!cellBlock.getWestWall()) {
+        if (!cellBlock.getWestWall() && westCell != null) {
             movements += 64;
             if (!westCell.getBlock().getWestWall()) {
                 movements += 128;
@@ -194,7 +199,7 @@ class CellPanel extends JPanel {
         // paint vertical walls on the left and right
         g.setColor(CELL_VERTICAL_WALL_COLOR);
         if (cellBlock.getEastWall())
-            g.fillRect(getWidth() - CELL_PADDING, 0, 2, getHeight());
+            g.fillRect(getWidth() - CELL_PADDING, 0, CELL_PADDING, getHeight());
         if (cellBlock.getWestWall())
             g.fillRect(0, 0, CELL_PADDING, getHeight());
 
@@ -203,8 +208,8 @@ class CellPanel extends JPanel {
         if (cellBlock.getNorthWall())
             g.fillRect(0, 0, getWidth(), CELL_PADDING);
         if (cellBlock.getSouthWall())
-            g.fillRect(getHeight() - CELL_PADDING, 0, getWidth(),
-                    CELL_PADDING);
+            g.fillRect(0, getHeight() - CELL_PADDING, getWidth(),
+                    getHeight());
 
         if (cellBlock.getBaseColor() != null) {
             g.setColor(cellBlock.getBaseColor());
@@ -227,5 +232,13 @@ class CellPanel extends JPanel {
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(CELL_SIZE, CELL_SIZE);
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
     }
 }

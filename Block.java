@@ -24,7 +24,7 @@ public class Block {
         boolean[] wallOut = new boolean[4];
 
         for (int i = 0; i < wallOut.length; i++) {
-            wallOut[i] = (walls / ((int) Math.pow(2, i)) == 1);
+            wallOut[i] = getWall(i);
         }
 
         return wallOut;
@@ -33,7 +33,7 @@ public class Block {
     public boolean getWall(int wall)/* 0 = N, 1 = E, 2 = S, 3 = W. -1 to bypass */ {
         if (wall == -1)
             return false;
-        return (walls / ((int) Math.pow(2, wall)) == 1);
+        return (walls >> wall & 1) == 1;
 
     }
 
@@ -41,7 +41,7 @@ public class Block {
         this.walls = walls;
     }
 
-    public void setWall(byte wall, boolean setWall) {
+    public void setWall(int wall, boolean setWall) {
 
         boolean[] wallState = getWalls();
         wallState[wall] = setWall;
@@ -52,8 +52,8 @@ public class Block {
     private byte convertWalls(boolean[] wallState) {
         byte wallsOut = 0;
 
-        for (int i = 0; i < wallState.length; i++) {
-            wallsOut += (wallState[i] ? ((int) Math.pow(i, 2)) : 0);
+        for (int i = wallState.length - 1; i > -1; i--) {
+            wallsOut += (wallState[i] ? 1 << i : 0);
         }
 
         return wallsOut;
@@ -95,19 +95,19 @@ public class Block {
 
     // set each wall
     public void setNorthWall(boolean wall) {
-        setWall((byte) 0, wall);
+        setWall(0, wall);
     }
 
     public void setEastWall(boolean wall) {
-        setWall((byte) 1, wall);
+        setWall(1, wall);
     }
 
     public void setSouthWall(boolean wall) {
-        setWall((byte) 2, wall);
+        setWall(2, wall);
     }
 
     public void setWestWall(boolean wall) {
-        setWall((byte) 3, wall);
+        setWall(3, wall);
     }
 
 }
