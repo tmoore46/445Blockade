@@ -51,36 +51,33 @@ public class BlockadeGUI extends JFrame {
         JPanel gridPanel = new JPanel(
                 new GridLayout(GRID_HEIGHT, GRID_WIDTH));
 
-        int[][] player1Spawn = new int[][] {{3,3},{3,7}};
-        int[][] player2Spawn = new int[][] {{10,3},{10,7}};
+        int[][] player1Spawn = new int[][] { { 3, 3 }, { 3, 7 } };
+        int[][] player2Spawn = new int[][] { { 10, 3 }, { 10, 7 } };
 
         // player 1
         for (int[] p1Locations : player1Spawn) {
-                GAME_BOARD[p1Locations[0]][p1Locations[1]] = 
-                    new CellPanel(new Block(PLAYER1_BGCOLOR), p1Locations[0], p1Locations[1]);
+            GAME_BOARD[p1Locations[0]][p1Locations[1]] = new CellPanel(new Block(PLAYER1_BGCOLOR), p1Locations[0],
+                    p1Locations[1]);
         }
 
         // player 2
         for (int[] p2Locations : player2Spawn) {
-            GAME_BOARD[p2Locations[0]][p2Locations[1]] = 
-                new CellPanel(new Block(PLAYER2_BGCOLOR), p2Locations[0], p2Locations[1]);
-    }
+            GAME_BOARD[p2Locations[0]][p2Locations[1]] = new CellPanel(new Block(PLAYER2_BGCOLOR), p2Locations[0],
+                    p2Locations[1]);
+        }
 
-        
         for (int row = 0; row < GRID_HEIGHT; row++) {
             for (int col = 0; col < GRID_WIDTH; col++) {
 
                 CellPanel cellPanel = GAME_BOARD[col][row];
-                
-                if(cellPanel == null){
+
+                if (cellPanel == null) {
                     cellPanel = new CellPanel(new Block(), col, row);
                     GAME_BOARD[col][row] = cellPanel;
                 }
                 gridPanel.add(cellPanel);
             }
         }
-        
-        player1 = new Player(null, PLAYER1_BGCOLOR, null)
 
         for (int row = 0; row < GRID_HEIGHT; row++) {
             for (int col = 0; col < GRID_WIDTH; col++) {
