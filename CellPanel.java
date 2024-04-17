@@ -53,10 +53,10 @@ class CellPanel extends JPanel {
          * N means unreachable
          * X means base
          * This refers to the bit manipulated
-         * A: Bit 9 accessed by 1, bit 10 accessed by 3
-         * B: Bit 11 accessed by 3, bit 12 accessed by 5
-         * C: Bit 13 accessed by 5, bit 14 accessed by 7
-         * D: Bit 15 accessed by 7, bit 16 accessed by 1
+         * A: Bit 9 accessed by 0, bit 10 accessed by 2
+         * B: Bit 11 accessed by 2, bit 12 accessed by 4
+         * C: Bit 13 accessed by 4, bit 14 accessed by 6
+         * D: Bit 15 accessed by 6, bit 16 accessed by 0
          *
          * N | N | 1 | N | N
          * N | D | 0 | A | N
@@ -68,59 +68,59 @@ class CellPanel extends JPanel {
         int movements = 0;
         // Northern Tracking
         if (!cellBlock.getNorthWall() && northCell != null) {
-            movements += 1;
+            movements += (1 << 0);
             if ((!northCell.getBlock().getNorthWall())) {
-                movements += 2;
+                movements += (1 << 1);
             }
             if ((!northCell.getBlock().getEastWall())) {
-                movements += 256;
+                movements += (1 << 8);
             }
             if ((!northCell.getBlock().getWestWall())) {
-                movements += 32768;
+                movements += (1 << 15);
             }
 
         }
 
         // Eastern Tracking
         if (!cellBlock.getEastWall() && eastCell != null) {
-            movements += 4;
+            movements += (1 << 2);
             if ((!eastCell.getBlock().getEastWall())) {
-                movements += 8;
+                movements += (1 << 3);
             }
             if ((!eastCell.getBlock().getNorthWall())) {
-                movements += 512;
+                movements += (1 << 9);
             }
             if ((!eastCell.getBlock().getSouthWall())) {
-                movements += 1024;
+                movements += (1 << 10);
             }
         }
 
         // Southern Tracking
         if (!cellBlock.getSouthWall() && southCell != null) {
-            movements += 16;
+            movements += (1 << 4);
             if ((!southCell.getBlock().getSouthWall())) {
-                movements += 32;
+                movements += (1 << 5);
             }
             if ((!southCell.getBlock().getEastWall())) {
-                movements += 2048;
+                movements += (1 << 11);
             }
             if ((!southCell.getBlock().getWestWall())) {
-                movements += 4096;
+                movements += (1 << 12);
             }
 
         }
 
         // Western Tracking
         if (!cellBlock.getWestWall() && westCell != null) {
-            movements += 64;
+            movements += (1 << 6);
             if (!westCell.getBlock().getWestWall()) {
-                movements += 128;
+                movements += (1 << 7);
             }
             if (!westCell.getBlock().getNorthWall()) {
-                movements += 16384;
+                movements += (1 << 14);
             }
             if (!westCell.getBlock().getSouthWall()) {
-                movements += 8192;
+                movements += (1 << 13);
             }
         }
 

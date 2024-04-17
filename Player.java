@@ -1,18 +1,22 @@
 import java.awt.Color;
 
 public class Player {
-    private byte vWalls = 9;
-    private byte hWalls = 9;
+    private int vWalls = 9;
+    private int hWalls = 9;
     private Piece piece0;
     private Piece piece1;
     private Color selfColor;
-    private Color enemyColor;
+    private CellPanel[] victoryCells;
 
-    public Player(byte[][] pieces, Color selfColor, Color enemyColor) {
+    public Player(int[][] pieces, Color selfColor, CellPanel[] victoryCells) {
         this.piece0 = new Piece(pieces[0]);
         this.piece1 = new Piece(pieces[1]);
         this.selfColor = selfColor;
-        this.enemyColor = enemyColor;
+        this.victoryCells = victoryCells;
+    }
+
+    public boolean hasWon() {
+        return (piece0.checkWinLocation(victoryCells) || piece1.checkWinLocation(victoryCells));
     }
 
     public Piece[] getPieces() {
@@ -23,20 +27,20 @@ public class Player {
         return getPiece ? piece1 : piece0;
     }
 
-    public Color getEnemyColor() {
-        return enemyColor;
-    }
-
     public Color getSelfColor() {
         return selfColor;
     }
 
-    public byte getHWalls() {
+    public int getHWalls() {
         return hWalls;
     }
 
-    public byte getVWalls() {
+    public int getVWalls() {
         return vWalls;
+    }
+
+    public CellPanel[] getVictoryCells() {
+        return victoryCells;
     }
 
     public boolean placeHWall() {

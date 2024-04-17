@@ -14,8 +14,8 @@ public class Board {
         }
     }
 
-    public Block getBoardBlock(byte[] position) {
-        return this.gameBoard[position[0]][position[1]];
+    public Block getBoardBlock(int x, int y) {
+        return this.gameBoard[x][y];
     }
 
     public int getWidth() {
