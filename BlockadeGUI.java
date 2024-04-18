@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 public class BlockadeGUI extends JFrame {
 
@@ -22,8 +21,10 @@ public class BlockadeGUI extends JFrame {
     private int player2HorizontalWalls = 9;
     private int player2VerticalWalls = 9;
 
-    public CellPanel firstClickedCellPanel = null;
-    public CellPanel secondClickedCellPanel = null;
+    private int turnCount = 0; // 0 = player1, 1 = player2
+
+    private CellPanel firstClickedCellPanel = null;
+    private CellPanel secondClickedCellPanel = null;
 
     public static final int GRID_WIDTH = 14;
     public static final int GRID_HEIGHT = 11;
@@ -37,7 +38,7 @@ public class BlockadeGUI extends JFrame {
     public static final String HORIZONTAL_TEXT = "Horizontal Walls: ";
     public static final String VERTICAL_TEXT = "Vertical Walls: ";
 
-    public static Player player1, player2;
+    private Player player1, player2;
 
     public static CellPanel[][] GAME_BOARD = new CellPanel[GRID_WIDTH][GRID_HEIGHT];
 
@@ -54,6 +55,8 @@ public class BlockadeGUI extends JFrame {
         int[][] player1Spawn = new int[][] { { 3, 3 }, { 3, 7 } };
         int[][] player2Spawn = new int[][] { { 10, 3 }, { 10, 7 } };
 
+        player1 = new Player(player1Spawn, PLAYER1_BGCOLOR, player2Spawn);
+        player2 = new Player(player2Spawn, PLAYER1_BGCOLOR, player1Spawn);
         // player 1
         for (int[] p1Locations : player1Spawn) {
             GAME_BOARD[p1Locations[0]][p1Locations[1]] = new CellPanel(new Block(PLAYER1_BGCOLOR), p1Locations[0],
@@ -148,6 +151,7 @@ public class BlockadeGUI extends JFrame {
         // https://stackoverflow.com/a/55957219
         // this should help
         gridPanel.addMouseListener(new MouseAdapter() {
+            // clicking a piece
             @Override
             public void mouseClicked(MouseEvent me) {
 
@@ -159,20 +163,26 @@ public class BlockadeGUI extends JFrame {
                 if (clickedObject instanceof JPanel) {
                     selectedPanel = (JPanel) clickedObject;
                     CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(me.getPoint());
-                    System.out.println(clickedCellPanel);
-                    if (firstClickedCellPanel == null)
+                    // System.out.println(clickedCellPanel);
+                    if (firstClickedCellPanel == null && clickedCellPanel.getBlock()
+                            .isOccupied(((turnCount & 1) == 1) ? player2.getSelfColor() : player1.getSelfColor())) {
+                        System.out.println("Clicked First");
+                        Piece selectedPiece = (((turnCount & 1) == 1) ? player2 : player1).getPiece(rootPaneCheckingEnabled)
                         firstClickedCellPanel = clickedCellPanel;
-                    else
+                    } else if (firstClickedCellPanel != null && !clickedCellPanel.getBlock().isOccupied() && ) {
+                        System.out.println("Clicked Second");
                         secondClickedCellPanel = clickedCellPanel;
+                    }
 
                     if (firstClickedCellPanel != null && secondClickedCellPanel != null) {
-                        firstClickedCellPanel = null;
-                        secondClickedCellPanel = null;
+                        System.out.println("Two positions Clicked");
+
                     }
 
                     System.err.println(clickedCellPanel.reachablePrintout());
                 }
             }
+
         });
 
         pack();
@@ -198,6 +208,16 @@ public class BlockadeGUI extends JFrame {
     public void updatePlayer2VerticalWalls(int newWalls) {
         player2VerticalWalls = newWalls;
         player2VerticalWallsLabel.setText(VERTICAL_TEXT + player2VerticalWalls);
+    }
+
+    public int[] getLocation(CellPanel panel) {
+        for (int x = 0; x < GAME_BOARD.length; x++) {
+            for (int y = 0; y < GAME_BOARD[x].length; y++) {
+                if (GAME_BOARD[x][y].equals(panel))
+                    return new int[] { x, y };
+            }
+        }
+        return new int[] { -1, -1 };
     }
 
     public static void main(String[] args) {

@@ -31,14 +31,10 @@ public class Piece {
         posY = y;
     }
 
-    public boolean checkWinLocation(CellPanel[] validEndPanels) {
+    public boolean checkWinLocation(int[] validEndPanels) {
         CellPanel currentPanel = BlockadeGUI.GAME_BOARD[posX][posY];
 
-        for (CellPanel endPanel : validEndPanels) {
-            if (currentPanel.equals(endPanel))
-                return true;
-        }
-        return false;
+        return currentPanel.equals(BlockadeGUI.GAME_BOARD[validEndPanels[0]][validEndPanels[1]]);
     }
 
     public boolean move(CellPanel endLocation) {

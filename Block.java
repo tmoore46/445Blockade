@@ -5,6 +5,7 @@ public class Block {
     private int walls; // nibble encoded NESW encoded (top, right, bottom, left)
     private Color baseColor;
     private boolean occupied;
+    private Color pieceColor;
 
     public Block() {
 
@@ -13,10 +14,11 @@ public class Block {
         this.occupied = false;
     }
 
-    public Block(Color baseColor) {
+    public Block(Color spawnColor) {
         this.walls = 0;
-        this.baseColor = baseColor;
+        baseColor = spawnColor;
         this.occupied = true;
+        pieceColor = spawnColor;
     }
 
     public boolean[] getWalls() {
@@ -66,6 +68,20 @@ public class Block {
 
     public boolean isOccupied() {
         return occupied;
+    }
+
+    public boolean isOccupied(Color color) {
+        return occupied && color.equals(pieceColor);
+    }
+
+    public void moveFrom() {
+        occupied = false;
+        pieceColor = null;
+    }
+
+    public void moveTo(Color pieceColor) {
+        this.pieceColor = pieceColor;
+        occupied = true;
     }
 
     public void setOccupied() {
