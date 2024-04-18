@@ -2,7 +2,7 @@ import java.awt.Color;
 
 public class Block {
 
-    private byte walls; // nibble encoded NESW encoded (top, right, bottom, left)
+    private int walls; // nibble encoded NESW encoded (top, right, bottom, left)
     private Color baseColor;
     private boolean occupied;
 
@@ -33,11 +33,11 @@ public class Block {
     public boolean getWall(int wall)/* 0 = N, 1 = E, 2 = S, 3 = W. -1 to bypass */ {
         if (wall == -1)
             return false;
-        return (walls >> wall & 1) == 1;
+        return ((walls >> wall) & 1) == 1;
 
     }
 
-    public void setWalls(byte walls) {
+    public void setWalls(int walls) {
         this.walls = walls;
     }
 
@@ -49,8 +49,8 @@ public class Block {
 
     }
 
-    private byte convertWalls(boolean[] wallState) {
-        byte wallsOut = 0;
+    private int convertWalls(boolean[] wallState) {
+        int wallsOut = 0;
 
         for (int i = wallState.length - 1; i > -1; i--) {
             wallsOut += (wallState[i] ? 1 << i : 0);

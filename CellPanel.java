@@ -68,59 +68,59 @@ class CellPanel extends JPanel {
         int movements = 0;
         // Northern Tracking
         if (!cellBlock.getNorthWall() && northCell != null) {
-            movements += (1 << 0);
+            movements = movements ^ (1 << 0);
             if ((!northCell.getBlock().getNorthWall())) {
-                movements += (1 << 1);
+                movements = movements ^ (1 << 1);
             }
             if ((!northCell.getBlock().getEastWall())) {
-                movements += (1 << 8);
+                movements = movements ^ (1 << 8);
             }
             if ((!northCell.getBlock().getWestWall())) {
-                movements += (1 << 15);
+                movements = movements ^ (1 << 15);
             }
 
         }
 
         // Eastern Tracking
         if (!cellBlock.getEastWall() && eastCell != null) {
-            movements += (1 << 2);
+            movements = movements ^ (1 << 2);
             if ((!eastCell.getBlock().getEastWall())) {
-                movements += (1 << 3);
+                movements = movements ^ (1 << 3);
             }
             if ((!eastCell.getBlock().getNorthWall())) {
-                movements += (1 << 9);
+                movements = movements ^ (1 << 9);
             }
             if ((!eastCell.getBlock().getSouthWall())) {
-                movements += (1 << 10);
+                movements = movements ^ (1 << 10);
             }
         }
 
         // Southern Tracking
         if (!cellBlock.getSouthWall() && southCell != null) {
-            movements += (1 << 4);
+            movements = movements ^ (1 << 4);
             if ((!southCell.getBlock().getSouthWall())) {
-                movements += (1 << 5);
+                movements = movements ^ (1 << 5);
             }
             if ((!southCell.getBlock().getEastWall())) {
-                movements += (1 << 11);
+                movements = movements ^ (1 << 11);
             }
             if ((!southCell.getBlock().getWestWall())) {
-                movements += (1 << 12);
+                movements = movements ^ (1 << 12);
             }
 
         }
 
         // Western Tracking
         if (!cellBlock.getWestWall() && westCell != null) {
-            movements += (1 << 6);
+            movements = movements ^ (1 << 6);
             if (!westCell.getBlock().getWestWall()) {
-                movements += (1 << 7);
+                movements = movements ^ (1 << 7);
             }
             if (!westCell.getBlock().getNorthWall()) {
-                movements += (1 << 14);
+                movements = movements ^ (1 << 14);
             }
             if (!westCell.getBlock().getSouthWall()) {
-                movements += (1 << 13);
+                movements = movements ^ (1 << 13);
             }
         }
 
