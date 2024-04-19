@@ -4,21 +4,40 @@ public class Piece {
 
     private int posX;
     private int posY;
+    private Color color;
 
-    public Piece(int x, int y) {
+    public Piece(int x, int y, Color color) {
 
         posX = x;
         posY = y;
+        this.color = color;
     }
 
-    public Piece(int[] location) {
+    public Piece(int[] location, Color color) {
 
         posX = location[0];
         posY = location[1];
+        this.color = color;
+    }
+
+    public boolean locationCheck(int x, int y) {
+        return (x == posX && y == posY);
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public int[] getLocation() {
         return new int[] { posX, posY };
+    }
+
+    public int getX() {
+        return posX;
+    }
+
+    public int getY() {
+        return posY;
     }
 
     public void setLocation(int[] location) {
@@ -37,22 +56,7 @@ public class Piece {
         return currentPanel.equals(BlockadeGUI.GAME_BOARD[validEndPanels[0]][validEndPanels[1]]);
     }
 
-    public boolean move(CellPanel endLocation) {
-
-        CellPanel startLocation = BlockadeGUI.GAME_BOARD[posX][posY];
-
-        int[] deltas = getMovementDeltas(startLocation, endLocation);
-
-        if (validMove(startLocation, deltas)) {
-
-            posX += deltas[0];
-            posY += deltas[1];
-            return true;
-        }
-        return false;
-    }
-
-    private int[] getMovementDeltas(CellPanel startLocation, CellPanel endLocation) {
+    public int[] getMovementDeltas(CellPanel startLocation, CellPanel endLocation) {
 
         CellPanel northCell;
         CellPanel eastCell;
@@ -119,44 +123,4 @@ public class Piece {
 
     }
 
-    private boolean validMove(CellPanel startLocation, int[] deltas) {
-        int validMoves = startLocation.reachableCells();
-
-        int deltaX = deltas[0];
-        int deltaY = deltas[1];
-
-        if (deltaX == -2)
-            return ((validMoves >> 7) & 1) == 1;
-        else if (deltaX == -1) {
-            if (deltaY == 1)
-                return ((((validMoves >> 13) & 1) == 1) || (((validMoves >> 14 & 1) == 1)));
-            else if (deltaY == 0)
-                return ((validMoves >> 6) & 1) == 1;
-            else if (deltaY == -1)
-                return ((((validMoves >> 15) & 1) == 1) || (((validMoves >> 16 & 1) == 1)));
-        } else if (deltaX == 0) {
-            if (deltaY == -2)
-                return ((validMoves >> 1) & 1) == 1;
-            else if (deltaY == -1)
-                return ((validMoves >> 0) & 1) == 1;
-            else if (deltaY == 1)
-                return ((validMoves >> 4) & 1) == 1;
-            else if (deltaY == 2)
-                return ((validMoves >> 5) & 1) == 1;
-        } else if (deltaX == 1) {
-            if (deltaY == 1)
-                return ((((validMoves >> 9) & 1) == 1) || (((validMoves >> 10) & 1) == 1));
-            else if (deltaY == 0)
-                return ((validMoves >> 2) & 1) == 1;
-            else if (deltaY == -1)
-                return ((((validMoves >> 11) & 1) == 1) || (((validMoves >> 12) & 1) == 1));
-        } else if (deltaX == 2)
-            return ((validMoves >> 3) & 1) == 1;
-
-        else
-            return false;
-
-        return false;
-
-    }
 }

@@ -11,7 +11,7 @@ class CellPanel extends JPanel {
     private int posY;
 
     private Block cellBlock;
-    private Color pieceColor;
+    private Piece piece;
     private CellPanel northCell;
     private CellPanel eastCell;
     private CellPanel southCell;
@@ -30,8 +30,12 @@ class CellPanel extends JPanel {
         setBackground(Color.GRAY);
     }
 
-    public void setPieceColor(Color color) {
-        pieceColor = color;
+    public void setPieceColor(Piece piece) {
+        this.piece = piece;
+    }
+
+    public int[] getPosition() {
+        return new int[] { posX, posY };
     }
 
     public void setCells(CellPanel north, CellPanel east, CellPanel south, CellPanel west) {
@@ -44,6 +48,69 @@ class CellPanel extends JPanel {
     public String reachablePrintout() {
         int output = reachableCells();
         return String.format("%16s", Integer.toBinaryString(output)).replace(" ", "0");
+    }
+
+    public boolean isValidMove(CellPanel endPanel) {
+        if (cellBlock.isOccupied() && (!endPanel.getBlock().isOccupied()
+                || endPanel.getBlock().getBaseColor().equals(cellBlock.getPieceColor()))) {
+
+            if (northCell != null) {
+                if (endPanel.equals(northCell))
+                    return true;
+                else {
+                    if (endPanel.equals(northCell.getNorthCell()))
+                        return true;
+                    else if (endPanel.equals(northCell.getEastCell()))
+                        return true;
+                    else if (endPanel.equals(northCell.getWestCell()))
+                        return true;
+                }
+
+                // east compares
+            } else if (eastCell != null) {
+                if (endPanel.equals(eastCell))
+                    return true;
+                else {
+                    if (endPanel.equals(eastCell.getEastCell()))
+                        return true;
+                    else if (endPanel.equals(eastCell.getNorthCell()))
+                        return true;
+                    else if (endPanel.equals(eastCell.getSouthCell()))
+                        return true;
+                }
+
+                // south compare
+            } else if (southCell != null) {
+                if (endPanel.equals(southCell))
+                    return true;
+                else {
+                    if (endPanel.equals(southCell.getSouthCell()))
+                        return true;
+                    else if (endPanel.equals(southCell.getEastCell()))
+                        return true;
+                    else if (endPanel.equals(southCell.getWestCell()))
+                        return true;
+                }
+
+                // west cell
+            } else if (westCell != null) {
+                if (endPanel.equals(westCell))
+                    return true;
+                else {
+                    if (endPanel.equals(westCell.getWestCell()))
+                        return true;
+                    else if (endPanel.equals(westCell.getNorthCell()))
+                        return true;
+                    else if (endPanel.equals(westCell.getSouthCell()))
+                        return true;
+                }
+                // outside of valid range, described in CellPanel
+            } else
+                return false;
+
+        }
+        return false;
+
     }
 
     public int reachableCells() {
@@ -221,11 +288,21 @@ class CellPanel extends JPanel {
                     CELL_PIECE_SIZE, (CELL_PADDING * 2));
         }
 
-        g.setColor(pieceColor);
-        if (cellBlock.isOccupied())
-            g.fillOval((getWidth() - CELL_PIECE_SIZE) / 2,
-                    (getWidth() - CELL_PIECE_SIZE) / 2,
-                    CELL_PIECE_SIZE, CELL_PIECE_SIZE);
+        if (cellBlock.isOccupied()) {
+            for (Player player : BlockadeGUI.PLAYERS) {
+                if (player != null) {
+                    for (Piece piece : player.getPieces()) {
+                        if (piece.locationCheck(posX, posY)) {
+                            g.setColor(piece.getColor());
+                            g.fillOval((getWidth() - CELL_PIECE_SIZE) / 2,
+                                    (getWidth() - CELL_PIECE_SIZE) / 2,
+                                    CELL_PIECE_SIZE, CELL_PIECE_SIZE);
+                        }
+                    }
+                }
+            }
+
+        }
 
     }
 

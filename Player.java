@@ -9,8 +9,8 @@ public class Player {
     private int[][] victoryCells;
 
     public Player(int[][] pieces, Color selfColor, int[][] victoryCells) {
-        this.piece0 = new Piece(pieces[0]);
-        this.piece1 = new Piece(pieces[1]);
+        this.piece0 = new Piece(pieces[0], selfColor);
+        this.piece1 = new Piece(pieces[1], selfColor);
         this.selfColor = selfColor;
         this.victoryCells = victoryCells;
     }
@@ -22,6 +22,14 @@ public class Player {
                 winCondition = true;
         }
         return winCondition;
+    }
+
+    public Piece getPiece(int x, int y) {
+        if (piece0.getX() == x && piece0.getY() == y)
+            return piece0;
+        else if (piece1.getX() == x && piece1.getY() == y)
+            return piece1;
+        return null;
     }
 
     public Piece[] getPieces() {

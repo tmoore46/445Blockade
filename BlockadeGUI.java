@@ -25,6 +25,7 @@ public class BlockadeGUI extends JFrame {
 
     private CellPanel firstClickedCellPanel = null;
     private CellPanel secondClickedCellPanel = null;
+    private Piece selectedPiece = null;
 
     public static final int GRID_WIDTH = 14;
     public static final int GRID_HEIGHT = 11;
@@ -38,7 +39,10 @@ public class BlockadeGUI extends JFrame {
     public static final String HORIZONTAL_TEXT = "Horizontal Walls: ";
     public static final String VERTICAL_TEXT = "Vertical Walls: ";
 
-    private Player player1, player2;
+    private static Player player1;
+    private static Player player2;
+
+    public static Player[] PLAYERS;
 
     public static CellPanel[][] GAME_BOARD = new CellPanel[GRID_WIDTH][GRID_HEIGHT];
 
@@ -56,16 +60,21 @@ public class BlockadeGUI extends JFrame {
         int[][] player2Spawn = new int[][] { { 10, 3 }, { 10, 7 } };
 
         player1 = new Player(player1Spawn, PLAYER1_BGCOLOR, player2Spawn);
-        player2 = new Player(player2Spawn, PLAYER1_BGCOLOR, player1Spawn);
+        player2 = new Player(player2Spawn, PLAYER2_BGCOLOR, player1Spawn);
+
+        PLAYERS = new Player[] { player1, player2 };
+
         // player 1
         for (int[] p1Locations : player1Spawn) {
-            GAME_BOARD[p1Locations[0]][p1Locations[1]] = new CellPanel(new Block(PLAYER1_BGCOLOR), p1Locations[0],
+            GAME_BOARD[p1Locations[0]][p1Locations[1]] = new CellPanel(
+                    new Block(player1.getPiece(p1Locations[0], p1Locations[1])), p1Locations[0],
                     p1Locations[1]);
         }
 
         // player 2
         for (int[] p2Locations : player2Spawn) {
-            GAME_BOARD[p2Locations[0]][p2Locations[1]] = new CellPanel(new Block(PLAYER2_BGCOLOR), p2Locations[0],
+            GAME_BOARD[p2Locations[0]][p2Locations[1]] = new CellPanel(
+                    new Block(player2.getPiece(p2Locations[0], p2Locations[1])), p2Locations[0],
                     p2Locations[1]);
         }
 
@@ -152,6 +161,7 @@ public class BlockadeGUI extends JFrame {
         // this should help
         gridPanel.addMouseListener(new MouseAdapter() {
             // clicking a piece
+            @SuppressWarnings("unused")
             @Override
             public void mouseClicked(MouseEvent me) {
 
@@ -163,23 +173,38 @@ public class BlockadeGUI extends JFrame {
                 if (clickedObject instanceof JPanel) {
                     selectedPanel = (JPanel) clickedObject;
                     CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(me.getPoint());
+                    Player player = ((turnCount & 1) == 1) ? player2 : player1;
                     // System.out.println(clickedCellPanel);
                     if (firstClickedCellPanel == null && clickedCellPanel.getBlock()
-                            .isOccupied(((turnCount & 1) == 1) ? player2.getSelfColor() : player1.getSelfColor())) {
+                            .isOccupied()) {
                         System.out.println("Clicked First");
-                        Piece selectedPiece = (((turnCount & 1) == 1) ? player2 : player1).getPiece(rootPaneCheckingEnabled)
                         firstClickedCellPanel = clickedCellPanel;
-                    } else if (firstClickedCellPanel != null && !clickedCellPanel.getBlock().isOccupied() && ) {
+                        selectedPiece = player.getPiece(firstClickedCellPanel.getPosX(),
+                                firstClickedCellPanel.getPosY());
+                    } else if (firstClickedCellPanel != null &&
+                            !clickedCellPanel.getBlock().isOccupied()
+                            && firstClickedCellPanel.isValidMove(clickedCellPanel)
+                            && selectedPiece != null) {
                         System.out.println("Clicked Second");
                         secondClickedCellPanel = clickedCellPanel;
-                    }
+                        selectedPiece.setLocation(secondClickedCellPanel.getPosition());
+                        firstClickedCellPanel.getBlock().setOccupied(false);
+                        secondClickedCellPanel.getBlock().setOccupied(true);
+                        repaint();
 
-                    if (firstClickedCellPanel != null && secondClickedCellPanel != null) {
-                        System.out.println("Two positions Clicked");
+                    } else
+                        ;
+                }
 
-                    }
-
-                    System.err.println(clickedCellPanel.reachablePrintout());
+                if (firstClickedCellPanel != null && secondClickedCellPanel != null) {
+                    System.out.println("Two positions Clicked");
+                    selectedPiece = null;
+                    firstClickedCellPanel = null;
+                    secondClickedCellPanel = null;
+                    System.out.println(selectedPiece);
+                    System.out.println(firstClickedCellPanel);
+                    System.out.println(secondClickedCellPanel);
+                    turnCount++;
                 }
             }
 

@@ -14,11 +14,11 @@ public class Block {
         this.occupied = false;
     }
 
-    public Block(Color spawnColor) {
+    public Block(Piece piece) {
         this.walls = 0;
-        baseColor = spawnColor;
+        baseColor = piece.getColor();
         this.occupied = true;
-        pieceColor = spawnColor;
+        pieceColor = piece.getColor();
     }
 
     public boolean[] getWalls() {
@@ -66,8 +66,16 @@ public class Block {
         return baseColor;
     }
 
+    public Color getPieceColor() {
+        return pieceColor;
+    }
+
     public boolean isOccupied() {
         return occupied;
+    }
+
+    public void setOccupied(boolean isOccupied) {
+        occupied = isOccupied;
     }
 
     public boolean isOccupied(Color color) {
