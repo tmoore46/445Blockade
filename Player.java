@@ -1,8 +1,8 @@
 import java.awt.Color;
 
 public class Player {
-    private int vWalls = 9;
-    private int hWalls = 9;
+    private Integer vWalls = 9;
+    private Integer hWalls = 9;
     private Piece piece0;
     private Piece piece1;
     private Color selfColor;
@@ -52,11 +52,11 @@ public class Player {
         return selfColor;
     }
 
-    public int getHWalls() {
+    public Integer getHWalls() {
         return hWalls;
     }
 
-    public int getVWalls() {
+    public Integer getVWalls() {
         return vWalls;
     }
 

@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.Color;
 
 import java.awt.event.MouseAdapter;
@@ -16,16 +17,11 @@ public class BlockadeGUI extends JFrame {
     private JLabel player2HorizontalWallsLabel;
     private JLabel player2VerticalWallsLabel;
 
-    private int player1HorizontalWalls = 9;
-    private int player1VerticalWalls = 9;
-    private int player2HorizontalWalls = 9;
-    private int player2VerticalWalls = 9;
-
     private int turnCount = 0; // 0 = player1, 1 = player2
 
-    private CellPanel firstClickedCellPanel = null;
-    private CellPanel secondClickedCellPanel = null;
-    private Piece selectedPiece = null;
+    private boolean hasMouseDragged = false;
+    private Point mouseEndPoint = null;
+    private Point mouseStartPoint = null;
 
     public static final int GRID_WIDTH = 14;
     public static final int GRID_HEIGHT = 11;
@@ -124,8 +120,8 @@ public class BlockadeGUI extends JFrame {
 
         JPanel player1WallsPanel = new JPanel(new GridLayout(2, 1));
 
-        player1HorizontalWallsLabel = new JLabel(HORIZONTAL_TEXT + player1HorizontalWalls);
-        player1VerticalWallsLabel = new JLabel(VERTICAL_TEXT + player1VerticalWalls);
+        player1HorizontalWallsLabel = new JLabel(HORIZONTAL_TEXT + player1.getHWalls());
+        player1VerticalWallsLabel = new JLabel(VERTICAL_TEXT + player1.getVWalls());
 
         player1HorizontalWallsLabel.setForeground(PLAYER1_TEXT_COLOR);
         player1VerticalWallsLabel.setForeground(PLAYER1_TEXT_COLOR);
@@ -135,8 +131,8 @@ public class BlockadeGUI extends JFrame {
 
         JPanel player2WallsPanel = new JPanel(new GridLayout(2, 1));
 
-        player2HorizontalWallsLabel = new JLabel(HORIZONTAL_TEXT + player2HorizontalWalls);
-        player2VerticalWallsLabel = new JLabel(VERTICAL_TEXT + player2VerticalWalls);
+        player2HorizontalWallsLabel = new JLabel(HORIZONTAL_TEXT + player2.getHWalls());
+        player2VerticalWallsLabel = new JLabel(VERTICAL_TEXT + player2.getVWalls());
 
         player2HorizontalWallsLabel.setForeground(PLAYER2_TEXT_COLOR);
         player2VerticalWallsLabel.setForeground(PLAYER2_TEXT_COLOR);
@@ -159,10 +155,18 @@ public class BlockadeGUI extends JFrame {
         // CellPanel as well.
         // https://stackoverflow.com/a/55957219
         // this should help
+
+        // player movement
         gridPanel.addMouseListener(new MouseAdapter() {
+            private CellPanel firstClickedCellPanel = null;
+            private CellPanel secondClickedCellPanel = null;
+            private Piece selectedPiece = null;
+
             // clicking a piece
             @Override
             public void mouseClicked(MouseEvent me) {
+
+                hasMouseDragged = false;
 
                 JPanel selectedPanel;
 
@@ -170,8 +174,12 @@ public class BlockadeGUI extends JFrame {
 
                 // handle all the cell panel stuff here
                 if (clickedObject instanceof JPanel) {
+
+                    mouseStartPoint = me.getPoint();
+
                     selectedPanel = (JPanel) clickedObject;
                     CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(me.getPoint());
+
                     Player player = getPlayer();
                     // System.out.println(clickedCellPanel);
                     if (firstClickedCellPanel == null &&
@@ -213,6 +221,25 @@ public class BlockadeGUI extends JFrame {
                 System.out.println(turnCount);
             }
 
+            @Override
+            public void mouseReleased(MouseEvent me) {
+                if (hasMouseDragged) {
+                    int wallPlacement = wallDirection(mouseStartPoint, mouseEndPoint);
+                    System.out.println(wallPlacement);
+                }
+            }
+
+        });
+
+        // player wall placement
+        gridPanel.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent me) {
+                if (!hasMouseDragged)
+                    mouseStartPoint = me.getPoint();
+                hasMouseDragged = true;
+                mouseEndPoint = me.getPoint();
+            }
         });
 
         pack();
@@ -220,38 +247,74 @@ public class BlockadeGUI extends JFrame {
         setVisible(true);
     }
 
-    public Player getPlayer() {
+    private int wallDirection(Point startPoint, Point endPoint) {
+
+        double deltaY = (endPoint.getY() - startPoint.getY());
+
+        double deltaX = (endPoint.getX() - startPoint.getX());
+        if (deltaY == 0)
+            deltaY++;
+
+        if (deltaX == 0)
+            deltaX++;
+
+        // stopping dX and dY being equal
+        if (deltaX == deltaY)
+            deltaX++;
+
+        int direction = 0;
+
+        System.out.println(deltaX + "\t" + deltaY);
+
+        if (deltaX > 0) {
+            // options:
+            // right wall up
+            // right wall down
+            // top going right
+            // bottom going right
+            if ((deltaY < 0 ? deltaY : -1 * deltaY) > deltaX) {
+                if (deltaY < 0)
+                    direction += (1 << 0);
+                else
+                    direction += (1 << 1);
+            } else {
+                if (deltaY < 0)
+                    direction += (1 << 2);
+                else
+                    direction += (1 << 3);
+            }
+        } else {
+            // options:
+            // left wall up
+            // left wall down
+            // top going left
+            // bottom going left
+            if ((deltaY < 0 ? deltaY : -1 * deltaY) > deltaX) {
+                if (deltaY < 0)
+                    direction += (1 << 4);
+                else
+                    direction += (1 << 5);
+            } else {
+                if (deltaY < 0)
+                    direction += (1 << 6);
+                else
+                    direction += (1 << 7);
+            }
+        }
+
+        return direction;
+
+    }
+
+    private Player getPlayer() {
         return ((turnCount & 1) == 1) ? player2 : player1;
     }
 
-    public void updatePlayer1HorizontalWalls(int newWalls) {
-        player1HorizontalWalls = newWalls;
-        player1HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player1HorizontalWalls);
-    }
-
-    public void updatePlayer1VerticalWalls(int newWalls) {
-        player1VerticalWalls = newWalls;
-        player1VerticalWallsLabel.setText(VERTICAL_TEXT + player1VerticalWalls);
-    }
-
-    public void updatePlayer2HorizontalWalls(int newWalls) {
-        player2HorizontalWalls = newWalls;
-        player2HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player2HorizontalWalls);
-    }
-
-    public void updatePlayer2VerticalWalls(int newWalls) {
-        player2VerticalWalls = newWalls;
-        player2VerticalWallsLabel.setText(VERTICAL_TEXT + player2VerticalWalls);
-    }
-
-    public int[] getLocation(CellPanel panel) {
-        for (int x = 0; x < GAME_BOARD.length; x++) {
-            for (int y = 0; y < GAME_BOARD[x].length; y++) {
-                if (GAME_BOARD[x][y].equals(panel))
-                    return new int[] { x, y };
-            }
-        }
-        return new int[] { -1, -1 };
+    private void updateWalls() {
+        player1HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player1.getHWalls());
+        player1VerticalWallsLabel.setText(HORIZONTAL_TEXT + player1.getVWalls());
+        player2HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player2.getHWalls());
+        player2VerticalWallsLabel.setText(HORIZONTAL_TEXT + player2.getVWalls());
     }
 
     public static void main(String[] args) {
