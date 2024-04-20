@@ -181,7 +181,7 @@ public class BlockadeGUI extends JFrame {
                     CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(me.getPoint());
 
                     Player player = getPlayer();
-                    // System.out.println(clickedCellPanel);
+
                     if (firstClickedCellPanel == null &&
                             clickedCellPanel.getBlock().isOccupied()
                             && clickedCellPanel.getBlock().getPieceColor() != null) {
@@ -199,9 +199,7 @@ public class BlockadeGUI extends JFrame {
                         secondClickedCellPanel = clickedCellPanel;
 
                         repaint();
-
-                    } else
-                        ;
+                    }
                 }
 
                 if (firstClickedCellPanel != null && secondClickedCellPanel != null) {
@@ -221,14 +219,35 @@ public class BlockadeGUI extends JFrame {
                 System.out.println(turnCount);
             }
 
+
             @Override
             public void mouseReleased(MouseEvent me) {
                 if (hasMouseDragged) {
                     int wallPlacement = wallDirection(mouseStartPoint, mouseEndPoint);
                     System.out.println(wallPlacement);
+            
+                    Player currentPlayer = getPlayer();
+            
+                    if (wallPlacement >= 0 && wallPlacement < 4 && currentPlayer.placeHWall()) {
+                        // Horizontal wall
+                        int startX = (int) mouseStartPoint.getX() / CellPanel.CELL_SIZE;
+                        int startY = (int) mouseStartPoint.getY() / CellPanel.CELL_SIZE;
+                        GAME_BOARD[startX][startY].getBlock().setSouthWall(true);
+                        GAME_BOARD[startX + 1][startY].getBlock().setSouthWall(true);
+                        repaint();
+                    } else if (wallPlacement >= 4 && wallPlacement < 8 && currentPlayer.placeVWall()) {
+                        // Vertical wall
+                        int startX = (int) mouseStartPoint.getX() / CellPanel.CELL_SIZE;
+                        int startY = (int) mouseStartPoint.getY() / CellPanel.CELL_SIZE;
+                        GAME_BOARD[startX][startY].getBlock().setEastWall(true);
+                        GAME_BOARD[startX][startY + 1].getBlock().setEastWall(true);
+                        repaint();
+                    }
+            
+                    updateWalls();
                 }
             }
-
+            
         });
 
         // player wall placement
