@@ -11,7 +11,6 @@ class CellPanel extends JPanel {
     private int posY;
 
     private Block cellBlock;
-    private Piece piece;
     private CellPanel northCell;
     private CellPanel eastCell;
     private CellPanel southCell;
@@ -28,10 +27,6 @@ class CellPanel extends JPanel {
         posX = x;
         posY = y;
         setBackground(Color.GRAY);
-    }
-
-    public void setPieceColor(Piece piece) {
-        this.piece = piece;
     }
 
     public int[] getPosition() {
@@ -67,7 +62,8 @@ class CellPanel extends JPanel {
                 }
 
                 // east compares
-            } else if (eastCell != null) {
+            }
+            if (eastCell != null) {
                 if (endPanel.equals(eastCell))
                     return true;
                 else {
@@ -80,7 +76,8 @@ class CellPanel extends JPanel {
                 }
 
                 // south compare
-            } else if (southCell != null) {
+            }
+            if (southCell != null) {
                 if (endPanel.equals(southCell))
                     return true;
                 else {
@@ -93,7 +90,8 @@ class CellPanel extends JPanel {
                 }
 
                 // west cell
-            } else if (westCell != null) {
+            }
+            if (westCell != null) {
                 if (endPanel.equals(westCell))
                     return true;
                 else {

@@ -21,6 +21,10 @@ public class Block {
         pieceColor = piece.getColor();
     }
 
+    public void setPieceColor(Color pieceColor) {
+        this.pieceColor = pieceColor;
+    }
+
     public boolean[] getWalls() {
 
         boolean[] wallOut = new boolean[4];

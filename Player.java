@@ -25,6 +25,14 @@ public class Player {
     }
 
     public Piece getPiece(int x, int y) {
+
+        System.out.print(piece0.getX());
+        System.out.print(", ");
+        System.out.println(piece0.getY());
+        System.out.print(piece1.getX());
+        System.out.print(", ");
+        System.out.println(piece1.getY());
+
         if (piece0.getX() == x && piece0.getY() == y)
             return piece0;
         else if (piece1.getX() == x && piece1.getY() == y)
