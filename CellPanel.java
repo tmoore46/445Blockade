@@ -252,6 +252,50 @@ class CellPanel extends JPanel {
         this.westCell = westCell;
     }
 
+    public boolean getNorthWall() {
+        return cellBlock.getNorthWall();
+    }
+
+    public boolean getSouthWall() {
+        return cellBlock.getSouthWall();
+    }
+
+    public boolean getEastWall() {
+        return cellBlock.getEastWall();
+    }
+
+    public boolean getWestWall() {
+        return cellBlock.getWestWall();
+    }
+
+    public void setNorthWall(boolean wall) {
+        cellBlock.setNorthWall(wall);
+        if (northCell != null) {
+            northCell.getBlock().setSouthWall(wall);
+        }
+    }
+
+    public void setSouthWall(boolean wall) {
+        cellBlock.setSouthWall(wall);
+        if (southCell != null) {
+            southCell.getBlock().setNorthWall(wall);
+        }
+    }
+
+    public void setWestWall(boolean wall) {
+        cellBlock.setWestWall(wall);
+        if (westCell != null) {
+            westCell.getBlock().setEastWall(wall);
+        }
+    }
+
+    public void setEastWall(boolean wall) {
+        cellBlock.setEastWall(wall);
+        if (eastCell != null) {
+            eastCell.getBlock().setWestWall(wall);
+        }
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
