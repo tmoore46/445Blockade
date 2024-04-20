@@ -1,18 +1,43 @@
 import java.awt.Color;
 
 public class Player {
-    private byte vWalls = 9;
-    private byte hWalls = 9;
+    private Integer vWalls = 9;
+    private Integer hWalls = 9;
     private Piece piece0;
     private Piece piece1;
     private Color selfColor;
-    private Color enemyColor;
+    private int[][] victoryCells;
 
-    public Player(byte[][] pieces, Color selfColor, Color enemyColor) {
-        this.piece0 = new Piece(pieces[0]);
-        this.piece1 = new Piece(pieces[1]);
+    public Player(int[][] pieces, Color selfColor, int[][] victoryCells) {
+        this.piece0 = new Piece(pieces[0], selfColor);
+        this.piece1 = new Piece(pieces[1], selfColor);
         this.selfColor = selfColor;
-        this.enemyColor = enemyColor;
+        this.victoryCells = victoryCells;
+    }
+
+    public boolean hasWon() {
+        boolean winCondition = false;
+        for (int[] winPositions : victoryCells) {
+            if (piece0.checkWinLocation(winPositions) || piece1.checkWinLocation(winPositions))
+                winCondition = true;
+        }
+        return winCondition;
+    }
+
+    public Piece getPiece(int x, int y) {
+
+        System.out.print(piece0.getX());
+        System.out.print(", ");
+        System.out.println(piece0.getY());
+        System.out.print(piece1.getX());
+        System.out.print(", ");
+        System.out.println(piece1.getY());
+
+        if (piece0.getX() == x && piece0.getY() == y)
+            return piece0;
+        else if (piece1.getX() == x && piece1.getY() == y)
+            return piece1;
+        return null;
     }
 
     public Piece[] getPieces() {
@@ -23,20 +48,20 @@ public class Player {
         return getPiece ? piece1 : piece0;
     }
 
-    public Color getEnemyColor() {
-        return enemyColor;
-    }
-
     public Color getSelfColor() {
         return selfColor;
     }
 
-    public byte getHWalls() {
+    public Integer getHWalls() {
         return hWalls;
     }
 
-    public byte getVWalls() {
+    public Integer getVWalls() {
         return vWalls;
+    }
+
+    public int[][] getVictoryCells() {
+        return victoryCells;
     }
 
     public boolean placeHWall() {
