@@ -8,8 +8,11 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.PopupFactory;
 
 public class BlockadeGUI extends JFrame {
+
+    public static BlockadeGUI guiReference;
 
     private JLabel player1HorizontalWallsLabel;
     private JLabel player1VerticalWallsLabel;
@@ -37,16 +40,19 @@ public class BlockadeGUI extends JFrame {
     public static final String HORIZONTAL_TEXT = "Horizontal Walls: ";
     public static final String VERTICAL_TEXT = "Vertical Walls: ";
 
-    private static Player player1;
-    private static Player player2;
+    private Player player1;
+    private Player player2;
 
     public static Player[] PLAYERS;
 
-    public static CellPanel[][] GAME_BOARD = new CellPanel[GRID_WIDTH][GRID_HEIGHT];
+    public CellPanel[][] GAME_BOARD = new CellPanel[GRID_WIDTH][GRID_HEIGHT];
 
     public BlockadeGUI() {
+
+        guiReference = this;
+
         setTitle("Blockade");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -57,8 +63,8 @@ public class BlockadeGUI extends JFrame {
         int[][] player1Spawn = new int[][] { { 3, 3 }, { 3, 7 } };
         int[][] player2Spawn = new int[][] { { 10, 3 }, { 10, 7 } };
 
-        player1 = new Player(player1Spawn, PLAYER1_BGCOLOR, player2Spawn);
-        player2 = new Player(player2Spawn, PLAYER2_BGCOLOR, player1Spawn);
+        player1 = new Player(player1Spawn, PLAYER1_BGCOLOR, player2Spawn, "Player 1");
+        player2 = new Player(player2Spawn, PLAYER2_BGCOLOR, player1Spawn, "Player 2");
 
         PLAYERS = new Player[] { player1, player2 };
 
@@ -213,11 +219,12 @@ public class BlockadeGUI extends JFrame {
 
                 }
                 System.out.println(turnCount);
-                if (player.hasWon()) {
+                if (player.hasWon(guiReference)) {
+                    System.out.println(getComponents());
                     if (player.equals(player1)) {
-                        System.out.println("Player 1 has won!");
+                        new VictoryScreen(player1, guiReference);
                     } else if (player.equals(player2)) {
-                        System.out.println("Player 1 has won!");
+                        new VictoryScreen(player2, guiReference);
                     } else {
                         System.err.println("Unknown Player has won?!?!");
                         System.exit(1);
@@ -439,7 +446,7 @@ public class BlockadeGUI extends JFrame {
 
     }
 
-    private Player getPlayer() {
+    public Player getPlayer() {
         return ((turnCount & 1) == 1) ? player2 : player1;
     }
 

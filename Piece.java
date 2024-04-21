@@ -50,10 +50,10 @@ public class Piece {
         posY = y;
     }
 
-    public boolean checkWinLocation(int[] validEndPanels) {
-        CellPanel currentPanel = BlockadeGUI.GAME_BOARD[posX][posY];
+    public boolean checkWinLocation(int[] validEndPanels, CellPanel[][] gameBoard) {
+        CellPanel currentPanel = gameBoard[posX][posY];
 
-        return currentPanel.equals(BlockadeGUI.GAME_BOARD[validEndPanels[0]][validEndPanels[1]]);
+        return currentPanel.equals(gameBoard[validEndPanels[0]][validEndPanels[1]]);
     }
 
     public int[] getMovementDeltas(CellPanel startLocation, CellPanel endLocation) {
