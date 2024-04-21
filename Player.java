@@ -16,12 +16,11 @@ public class Player {
     }
 
     public boolean hasWon() {
-        boolean winCondition = false;
         for (int[] winPositions : victoryCells) {
             if (piece0.checkWinLocation(winPositions) || piece1.checkWinLocation(winPositions))
-                winCondition = true;
+                return true;
         }
-        return winCondition;
+        return false;
     }
 
     public Piece getPiece(int x, int y) {

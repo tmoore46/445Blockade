@@ -167,6 +167,7 @@ public class BlockadeGUI extends JFrame {
 
                 Object clickedObject = me.getSource();
 
+                Player player = getPlayer();
                 // handle all the cell panel stuff here
                 if (clickedObject instanceof JPanel) {
 
@@ -174,8 +175,6 @@ public class BlockadeGUI extends JFrame {
 
                     selectedPanel = (JPanel) clickedObject;
                     CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(me.getPoint());
-
-                    Player player = getPlayer();
 
                     if (firstClickedCellPanel == null &&
                             clickedCellPanel.getBlock().isOccupied()
@@ -211,9 +210,21 @@ public class BlockadeGUI extends JFrame {
                     selectedPiece = null;
                     firstClickedCellPanel = null;
                     secondClickedCellPanel = null;
+
                 }
                 System.out.println(turnCount);
+                if (player.hasWon()) {
+                    if (player.equals(player1)) {
+                        System.out.println("Player 1 has won!");
+                    } else if (player.equals(player2)) {
+                        System.out.println("Player 1 has won!");
+                    } else {
+                        System.err.println("Unknown Player has won?!?!");
+                        System.exit(1);
+                    }
+                }
                 nextTurn();
+
             }
 
             @Override
