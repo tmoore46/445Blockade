@@ -22,6 +22,9 @@ public class BlockadeGUI extends JFrame {
     private Point mouseEndPoint = null;
     private Point mouseStartPoint = null;
 
+    private boolean haveMoved = false;
+    private boolean havePlacedWall = false;
+
     public static final int GRID_WIDTH = 14;
     public static final int GRID_HEIGHT = 11;
 
@@ -148,13 +151,6 @@ public class BlockadeGUI extends JFrame {
 
         add(mainPanel);
 
-        // TODO: IMPLEMENT MOUSE LISTENER
-        // needs to be able to detect 2 different clicks, maybe click and drag
-        // will need to mainly get the panel selected, so see if we need to add one to
-        // CellPanel as well.
-        // https://stackoverflow.com/a/55957219
-        // this should help
-
         // player movement
         gridPanel.addMouseListener(new MouseAdapter() {
             private CellPanel firstClickedCellPanel = null;
@@ -183,7 +179,8 @@ public class BlockadeGUI extends JFrame {
 
                     if (firstClickedCellPanel == null &&
                             clickedCellPanel.getBlock().isOccupied()
-                            && clickedCellPanel.getBlock().getPieceColor() != null) {
+                            && clickedCellPanel.getBlock().getPieceColor() != null
+                            && !haveMoved) {
                         if (clickedCellPanel.getBlock().getPieceColor().equals((player.getSelfColor()))) {
                             // System.out.println("Clicked First");
                             firstClickedCellPanel = clickedCellPanel;
@@ -210,11 +207,13 @@ public class BlockadeGUI extends JFrame {
 
                     firstClickedCellPanel.getBlock().setOccupied(false);
                     secondClickedCellPanel.getBlock().setOccupied(true);
+                    haveMoved = true;
                     selectedPiece = null;
                     firstClickedCellPanel = null;
                     secondClickedCellPanel = null;
                 }
                 System.out.println(turnCount);
+                nextTurn();
             }
 
             @Override
@@ -224,7 +223,7 @@ public class BlockadeGUI extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent me) {
-                if (hasMouseDragged) {
+                if (hasMouseDragged && !havePlacedWall) {
                     int wallPlacement = wallDirection(mouseStartPoint, mouseEndPoint);
 
                     Player player = getPlayer();
@@ -257,9 +256,11 @@ public class BlockadeGUI extends JFrame {
                             case (1 << 1):
                                 if (northPanel != null) {
                                     if (!placeWallCell.getEastWall() && !northPanel.getEastWall()) {
-                                        placeWallCell.setEastWall(true);
-                                        northPanel.setEastWall(true);
-                                        validPlacement = true;
+                                        if (player.placeVWall()) {
+                                            placeWallCell.setEastWall(true);
+                                            northPanel.setEastWall(true);
+                                            validPlacement = true;
+                                        }
                                     }
                                 }
                                 break;
@@ -267,9 +268,11 @@ public class BlockadeGUI extends JFrame {
                             case (1 << 2):
                                 if (northPanel != null) {
                                     if (!placeWallCell.getWestWall() && !northPanel.getWestWall()) {
-                                        placeWallCell.setWestWall(true);
-                                        northPanel.setWestWall(true);
-                                        validPlacement = true;
+                                        if (player.placeVWall()) {
+                                            placeWallCell.setWestWall(true);
+                                            northPanel.setWestWall(true);
+                                            validPlacement = true;
+                                        }
                                     }
                                 }
 
@@ -277,7 +280,7 @@ public class BlockadeGUI extends JFrame {
                             // top side going left
                             case (1 << 3):
                                 if (westPanel != null) {
-                                    if (!placeWallCell.getNorthWall() && westPanel.getNorthWall()) {
+                                    if (!placeWallCell.getNorthWall() && !westPanel.getNorthWall()) {
                                         if (player.placeHWall()) {
                                             placeWallCell.setNorthWall(true);
                                             westPanel.setNorthWall(true);
@@ -289,7 +292,7 @@ public class BlockadeGUI extends JFrame {
                             // bottom side going left
                             case (1 << 4):
                                 if (westPanel != null) {
-                                    if (!placeWallCell.getSouthWall() && westPanel.getSouthWall()) {
+                                    if (!placeWallCell.getSouthWall() && !westPanel.getSouthWall()) {
                                         if (player.placeHWall()) {
                                             placeWallCell.setSouthWall(true);
                                             westPanel.setSouthWall(true);
@@ -302,9 +305,11 @@ public class BlockadeGUI extends JFrame {
                             case (1 << 5):
                                 if (southPanel != null) {
                                     if (!placeWallCell.getWestWall() && !southPanel.getWestWall()) {
-                                        placeWallCell.setWestWall(true);
-                                        southPanel.setWestWall(true);
-                                        validPlacement = true;
+                                        if (player.placeVWall()) {
+                                            placeWallCell.setWestWall(true);
+                                            southPanel.setWestWall(true);
+                                            validPlacement = true;
+                                        }
                                     }
                                 }
                                 break;
@@ -312,16 +317,18 @@ public class BlockadeGUI extends JFrame {
                             case (1 << 6):
                                 if (southPanel != null) {
                                     if (!placeWallCell.getEastWall() && !southPanel.getEastWall()) {
-                                        placeWallCell.setEastWall(true);
-                                        southPanel.setEastWall(true);
-                                        validPlacement = true;
+                                        if (player.placeVWall()) {
+                                            placeWallCell.setEastWall(true);
+                                            southPanel.setEastWall(true);
+                                            validPlacement = true;
+                                        }
                                     }
                                 }
                                 break;
                             // bottom side going right
                             case (1 << 7):
                                 if (eastPanel != null) {
-                                    if (!placeWallCell.getSouthWall() && eastPanel.getSouthWall()) {
+                                    if (!placeWallCell.getSouthWall() && !eastPanel.getSouthWall()) {
                                         if (player.placeHWall()) {
                                             placeWallCell.setSouthWall(true);
                                             eastPanel.setSouthWall(true);
@@ -336,12 +343,15 @@ public class BlockadeGUI extends JFrame {
                         }
 
                         if (validPlacement) {
+                            havePlacedWall = true;
                             updateWalls();
                             repaint();
-                            turnCount++;
                         }
                     }
                 }
+
+                nextTurn();
+                updateWalls();
 
             }
 
@@ -364,6 +374,14 @@ public class BlockadeGUI extends JFrame {
         pack();
         setLocationRelativeTo(null); // Center the frame on the screen
         setVisible(true);
+    }
+
+    private void nextTurn() {
+        if (havePlacedWall && haveMoved) {
+            turnCount++;
+            havePlacedWall = false;
+            haveMoved = false;
+        }
     }
 
     private int wallDirection(Point startPoint, Point endPoint) {
@@ -416,9 +434,10 @@ public class BlockadeGUI extends JFrame {
 
     private void updateWalls() {
         player1HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player1.getHWalls());
-        player1VerticalWallsLabel.setText(HORIZONTAL_TEXT + player1.getVWalls());
+        player1VerticalWallsLabel.setText(VERTICAL_TEXT + player1.getVWalls());
         player2HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player2.getHWalls());
-        player2VerticalWallsLabel.setText(HORIZONTAL_TEXT + player2.getVWalls());
+        player2VerticalWallsLabel.setText(VERTICAL_TEXT + player2.getVWalls());
+        repaint();
     }
 
     public static void main(String[] args) {
