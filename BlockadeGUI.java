@@ -2,15 +2,17 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Color;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.PopupFactory;
 
 public class BlockadeGUI extends JFrame {
+
+    public static BlockadeGUI guiReference;
 
     private JLabel player1HorizontalWallsLabel;
     private JLabel player1VerticalWallsLabel;
@@ -22,6 +24,9 @@ public class BlockadeGUI extends JFrame {
     private boolean hasMouseDragged = false;
     private Point mouseEndPoint = null;
     private Point mouseStartPoint = null;
+
+    private boolean haveMoved = false;
+    private boolean havePlacedWall = false;
 
     public static final int GRID_WIDTH = 14;
     public static final int GRID_HEIGHT = 11;
@@ -35,16 +40,19 @@ public class BlockadeGUI extends JFrame {
     public static final String HORIZONTAL_TEXT = "Horizontal Walls: ";
     public static final String VERTICAL_TEXT = "Vertical Walls: ";
 
-    private static Player player1;
-    private static Player player2;
+    private Player player1;
+    private Player player2;
 
     public static Player[] PLAYERS;
 
-    public static CellPanel[][] GAME_BOARD = new CellPanel[GRID_WIDTH][GRID_HEIGHT];
+    public CellPanel[][] GAME_BOARD = new CellPanel[GRID_WIDTH][GRID_HEIGHT];
 
     public BlockadeGUI() {
+
+        guiReference = this;
+
         setTitle("Blockade");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -55,8 +63,8 @@ public class BlockadeGUI extends JFrame {
         int[][] player1Spawn = new int[][] { { 3, 3 }, { 3, 7 } };
         int[][] player2Spawn = new int[][] { { 10, 3 }, { 10, 7 } };
 
-        player1 = new Player(player1Spawn, PLAYER1_BGCOLOR, player2Spawn);
-        player2 = new Player(player2Spawn, PLAYER2_BGCOLOR, player1Spawn);
+        player1 = new Player(player1Spawn, PLAYER1_BGCOLOR, player2Spawn, "Player 1");
+        player2 = new Player(player2Spawn, PLAYER2_BGCOLOR, player1Spawn, "Player 2");
 
         PLAYERS = new Player[] { player1, player2 };
 
@@ -149,13 +157,6 @@ public class BlockadeGUI extends JFrame {
 
         add(mainPanel);
 
-        // TODO: IMPLEMENT MOUSE LISTENER
-        // needs to be able to detect 2 different clicks, maybe click and drag
-        // will need to mainly get the panel selected, so see if we need to add one to
-        // CellPanel as well.
-        // https://stackoverflow.com/a/55957219
-        // this should help
-
         // player movement
         gridPanel.addMouseListener(new MouseAdapter() {
             private CellPanel firstClickedCellPanel = null;
@@ -172,6 +173,7 @@ public class BlockadeGUI extends JFrame {
 
                 Object clickedObject = me.getSource();
 
+                Player player = getPlayer();
                 // handle all the cell panel stuff here
                 if (clickedObject instanceof JPanel) {
 
@@ -180,11 +182,10 @@ public class BlockadeGUI extends JFrame {
                     selectedPanel = (JPanel) clickedObject;
                     CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(me.getPoint());
 
-                    Player player = getPlayer();
-
                     if (firstClickedCellPanel == null &&
                             clickedCellPanel.getBlock().isOccupied()
-                            && clickedCellPanel.getBlock().getPieceColor() != null) {
+                            && clickedCellPanel.getBlock().getPieceColor() != null
+                            && !haveMoved) {
                         if (clickedCellPanel.getBlock().getPieceColor().equals((player.getSelfColor()))) {
                             // System.out.println("Clicked First");
                             firstClickedCellPanel = clickedCellPanel;
@@ -195,7 +196,7 @@ public class BlockadeGUI extends JFrame {
                             !clickedCellPanel.getBlock().isOccupied()
                             && firstClickedCellPanel.isValidMove(clickedCellPanel)
                             && selectedPiece != null) {
-                        System.out.println("Clicked Second");
+                        // System.out.println("Clicked Second");
                         secondClickedCellPanel = clickedCellPanel;
 
                         repaint();
@@ -203,7 +204,7 @@ public class BlockadeGUI extends JFrame {
                 }
 
                 if (firstClickedCellPanel != null && secondClickedCellPanel != null) {
-                    System.out.println("Two positions Clicked");
+                    // System.out.println("Two positions Clicked");
                     selectedPiece.setLocation(secondClickedCellPanel.getPosition());
 
                     firstClickedCellPanel.getBlock().setPieceColor(null);
@@ -211,54 +212,181 @@ public class BlockadeGUI extends JFrame {
 
                     firstClickedCellPanel.getBlock().setOccupied(false);
                     secondClickedCellPanel.getBlock().setOccupied(true);
+                    haveMoved = true;
                     selectedPiece = null;
                     firstClickedCellPanel = null;
                     secondClickedCellPanel = null;
-                    turnCount++;
+
                 }
                 System.out.println(turnCount);
+                if (player.hasWon(guiReference)) {
+                    System.out.println(getComponents());
+                    if (player.equals(player1)) {
+                        new VictoryScreen(player1, guiReference);
+                    } else if (player.equals(player2)) {
+                        new VictoryScreen(player2, guiReference);
+                    } else {
+                        System.err.println("Unknown Player has won?!?!");
+                        System.exit(1);
+                    }
+                }
+                nextTurn();
+
             }
 
+            @Override
+            public void mousePressed(MouseEvent e) {
+                hasMouseDragged = false;
+            }
 
             @Override
             public void mouseReleased(MouseEvent me) {
-                if (hasMouseDragged) {
+                if (hasMouseDragged && !havePlacedWall) {
                     int wallPlacement = wallDirection(mouseStartPoint, mouseEndPoint);
-                    System.out.println(wallPlacement);
-            
-                    Player currentPlayer = getPlayer();
-            
-                    if (wallPlacement >= 0 && wallPlacement < 4 && currentPlayer.placeHWall()) {
-                        // Horizontal wall
-                        int startX = (int) mouseStartPoint.getX() / CellPanel.CELL_SIZE;
-                        int startY = (int) mouseStartPoint.getY() / CellPanel.CELL_SIZE;
-                        GAME_BOARD[startX][startY].getBlock().setSouthWall(true);
-                        GAME_BOARD[startX + 1][startY].getBlock().setSouthWall(true);
-                        repaint();
-                    } else if (wallPlacement >= 4 && wallPlacement < 8 && currentPlayer.placeVWall()) {
-                        // Vertical wall
-                        int startX = (int) mouseStartPoint.getX() / CellPanel.CELL_SIZE;
-                        int startY = (int) mouseStartPoint.getY() / CellPanel.CELL_SIZE;
-                        GAME_BOARD[startX][startY].getBlock().setEastWall(true);
-                        GAME_BOARD[startX][startY + 1].getBlock().setEastWall(true);
-                        repaint();
+
+                    Player player = getPlayer();
+
+                    Object wallPlaceObject = me.getSource();
+                    if (wallPlacement != -1 && wallPlaceObject instanceof JPanel) {
+                        boolean validPlacement = false;
+
+                        CellPanel placeWallCell = (CellPanel) ((JPanel) wallPlaceObject)
+                                .getComponentAt(mouseStartPoint);
+
+                        CellPanel northPanel = placeWallCell.getNorthCell();
+                        CellPanel eastPanel = placeWallCell.getEastCell();
+                        CellPanel southPanel = placeWallCell.getSouthCell();
+                        CellPanel westPanel = placeWallCell.getWestCell();
+                        switch (wallPlacement) {
+                            // top side going right
+                            case (1 << 0):
+                                if (eastPanel != null) {
+                                    if (!placeWallCell.getNorthWall() && !eastPanel.getNorthWall()) {
+                                        if (player.placeHWall()) {
+                                            placeWallCell.setNorthWall(true);
+                                            eastPanel.setNorthWall(true);
+                                            validPlacement = true;
+                                        }
+                                    }
+                                }
+                                break;
+                            // right side going up
+                            case (1 << 1):
+                                if (northPanel != null) {
+                                    if (!placeWallCell.getEastWall() && !northPanel.getEastWall()) {
+                                        if (player.placeVWall()) {
+                                            placeWallCell.setEastWall(true);
+                                            northPanel.setEastWall(true);
+                                            validPlacement = true;
+                                        }
+                                    }
+                                }
+                                break;
+                            // left side going up
+                            case (1 << 2):
+                                if (northPanel != null) {
+                                    if (!placeWallCell.getWestWall() && !northPanel.getWestWall()) {
+                                        if (player.placeVWall()) {
+                                            placeWallCell.setWestWall(true);
+                                            northPanel.setWestWall(true);
+                                            validPlacement = true;
+                                        }
+                                    }
+                                }
+
+                                break;
+                            // top side going left
+                            case (1 << 3):
+                                if (westPanel != null) {
+                                    if (!placeWallCell.getNorthWall() && !westPanel.getNorthWall()) {
+                                        if (player.placeHWall()) {
+                                            placeWallCell.setNorthWall(true);
+                                            westPanel.setNorthWall(true);
+                                            validPlacement = true;
+                                        }
+                                    }
+                                }
+                                break;
+                            // bottom side going left
+                            case (1 << 4):
+                                if (westPanel != null) {
+                                    if (!placeWallCell.getSouthWall() && !westPanel.getSouthWall()) {
+                                        if (player.placeHWall()) {
+                                            placeWallCell.setSouthWall(true);
+                                            westPanel.setSouthWall(true);
+                                            validPlacement = true;
+                                        }
+                                    }
+                                }
+                                break;
+                            // left side going down
+                            case (1 << 5):
+                                if (southPanel != null) {
+                                    if (!placeWallCell.getWestWall() && !southPanel.getWestWall()) {
+                                        if (player.placeVWall()) {
+                                            placeWallCell.setWestWall(true);
+                                            southPanel.setWestWall(true);
+                                            validPlacement = true;
+                                        }
+                                    }
+                                }
+                                break;
+                            // right side going down
+                            case (1 << 6):
+                                if (southPanel != null) {
+                                    if (!placeWallCell.getEastWall() && !southPanel.getEastWall()) {
+                                        if (player.placeVWall()) {
+                                            placeWallCell.setEastWall(true);
+                                            southPanel.setEastWall(true);
+                                            validPlacement = true;
+                                        }
+                                    }
+                                }
+                                break;
+                            // bottom side going right
+                            case (1 << 7):
+                                if (eastPanel != null) {
+                                    if (!placeWallCell.getSouthWall() && !eastPanel.getSouthWall()) {
+                                        if (player.placeHWall()) {
+                                            placeWallCell.setSouthWall(true);
+                                            eastPanel.setSouthWall(true);
+                                            validPlacement = true;
+                                        }
+                                    }
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+
+                        if (validPlacement) {
+                            havePlacedWall = true;
+                            updateWalls();
+                            repaint();
+                        }
                     }
-            
-                    updateWalls();
                 }
+
+                nextTurn();
+                updateWalls();
+
             }
-            
+
         });
 
         // player wall placement
         gridPanel.addMouseMotionListener(new MouseAdapter() {
+
             @Override
             public void mouseDragged(MouseEvent me) {
                 if (!hasMouseDragged)
                     mouseStartPoint = me.getPoint();
+
                 hasMouseDragged = true;
                 mouseEndPoint = me.getPoint();
             }
+
         });
 
         pack();
@@ -266,74 +394,68 @@ public class BlockadeGUI extends JFrame {
         setVisible(true);
     }
 
+    private void nextTurn() {
+        if (havePlacedWall && haveMoved) {
+            turnCount++;
+            havePlacedWall = false;
+            haveMoved = false;
+        }
+    }
+
     private int wallDirection(Point startPoint, Point endPoint) {
 
-        double deltaY = (endPoint.getY() - startPoint.getY());
-
         double deltaX = (endPoint.getX() - startPoint.getX());
-        if (deltaY == 0)
-            deltaY++;
+        double deltaY = (startPoint.getY() - endPoint.getY());
 
-        if (deltaX == 0)
-            deltaX++;
+        double slope = deltaY / deltaX;
 
-        // stopping dX and dY being equal
-        if (deltaX == deltaY)
-            deltaX++;
+        double angle = Math.atan(slope);
 
-        int direction = 0;
+        double sine = Math.toDegrees(Math.sin(angle));
 
-        System.out.println(deltaX + "\t" + deltaY);
+        boolean positiveX = deltaX > 0;
+        boolean positiveY = deltaY > 0;
 
-        if (deltaX > 0) {
-            // options:
-            // right wall up
-            // right wall down
-            // top going right
-            // bottom going right
-            if ((deltaY < 0 ? deltaY : -1 * deltaY) > deltaX) {
-                if (deltaY < 0)
-                    direction += (1 << 0);
-                else
-                    direction += (1 << 1);
-            } else {
-                if (deltaY < 0)
-                    direction += (1 << 2);
-                else
-                    direction += (1 << 3);
-            }
-        } else {
-            // options:
-            // left wall up
-            // left wall down
-            // top going left
-            // bottom going left
-            if ((deltaY < 0 ? deltaY : -1 * deltaY) > deltaX) {
-                if (deltaY < 0)
-                    direction += (1 << 4);
-                else
-                    direction += (1 << 5);
-            } else {
-                if (deltaY < 0)
-                    direction += (1 << 6);
-                else
-                    direction += (1 << 7);
-            }
-        }
+        // top side going right
+        if ((0 < sine && sine < 45) && positiveX && positiveY)
+            return (1 << 0);
+        // right side going up
+        else if ((45 < sine && sine < 90) && positiveX && positiveY)
+            return (1 << 1);
+        // left side going up
+        else if ((-90 < sine && sine < -45) && !positiveX && positiveY)
+            return (1 << 2);
+        // top side going left
+        else if ((-45 < sine && sine < 0) && !positiveX && positiveY)
+            return (1 << 3);
 
-        return direction;
+        // bottom side going left
+        else if ((0 < sine && sine < 45) && !positiveX && !positiveY)
+            return (1 << 4);
+        // left side going down
+        else if ((45 < sine && sine < 90) && !positiveX && !positiveY)
+            return (1 << 5);
+        // right side going down
+        else if ((-90 < sine && sine < -45) && positiveX && !positiveY)
+            return (1 << 6);
+        // bottom side going rights
+        else if ((-45 < sine && sine < 0) && positiveX && !positiveY)
+            return (1 << 7);
+
+        return -1;
 
     }
 
-    private Player getPlayer() {
+    public Player getPlayer() {
         return ((turnCount & 1) == 1) ? player2 : player1;
     }
 
     private void updateWalls() {
         player1HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player1.getHWalls());
-        player1VerticalWallsLabel.setText(HORIZONTAL_TEXT + player1.getVWalls());
+        player1VerticalWallsLabel.setText(VERTICAL_TEXT + player1.getVWalls());
         player2HorizontalWallsLabel.setText(HORIZONTAL_TEXT + player2.getHWalls());
-        player2VerticalWallsLabel.setText(HORIZONTAL_TEXT + player2.getVWalls());
+        player2VerticalWallsLabel.setText(VERTICAL_TEXT + player2.getVWalls());
+        repaint();
     }
 
     public static void main(String[] args) {

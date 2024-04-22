@@ -45,61 +45,80 @@ class CellPanel extends JPanel {
         return String.format("%16s", Integer.toBinaryString(output)).replace(" ", "0");
     }
 
+    /*
+     * ASCII Drawing of the movement validity
+     * N means unreachable
+     * X means base
+     * This refers to the bit manipulated
+     * A: Bit 8 accessed by 0, Bit 9 accessed by 2
+     * B: Bit 10 accessed by 2, Bit 11 accessed by 4
+     * C: Bit 12 accessed by 4, Bit 13 accessed by 6
+     * D: Bit 14 accessed by 6, Bit 15 accessed by 0
+     *
+     * N | N | 1 | N | N
+     * N | D | 0 | A | N
+     * 7 | 6 | X | 2 | 3
+     * N | C | 4 | B | N
+     * N | N | 5 | N | N
+     *
+     */
     public boolean isValidMove(CellPanel endPanel) {
+        int validMoves = reachableCells();
+        System.out.println(reachablePrintout());
         if (cellBlock.isOccupied() && (!endPanel.getBlock().isOccupied()
                 || endPanel.getBlock().getBaseColor().equals(cellBlock.getPieceColor()))) {
 
             if (northCell != null) {
-                if (endPanel.equals(northCell))
+                if (endPanel.equals(northCell) && ((validMoves & (1 << 0)) == (1 << 0)))
                     return true;
                 else {
-                    if (endPanel.equals(northCell.getNorthCell()))
+                    if (endPanel.equals(northCell.getNorthCell()) && ((validMoves & (1 << 1)) == (1 << 1)))
                         return true;
-                    else if (endPanel.equals(northCell.getEastCell()))
+                    else if (endPanel.equals(northCell.getEastCell()) && ((validMoves & (1 << 9)) == (1 << 9)))
                         return true;
-                    else if (endPanel.equals(northCell.getWestCell()))
+                    else if (endPanel.equals(northCell.getWestCell()) && ((validMoves & (1 << 15)) == (1 << 15)))
                         return true;
                 }
 
                 // east compares
             }
             if (eastCell != null) {
-                if (endPanel.equals(eastCell))
+                if (endPanel.equals(eastCell) && ((validMoves & (1 << 2)) == (1 << 2)))
                     return true;
                 else {
-                    if (endPanel.equals(eastCell.getEastCell()))
+                    if (endPanel.equals(eastCell.getEastCell()) && ((validMoves & (1 << 3)) == (1 << 3)))
                         return true;
-                    else if (endPanel.equals(eastCell.getNorthCell()))
+                    else if (endPanel.equals(eastCell.getNorthCell()) && ((validMoves & (1 << 9)) == (1 << 9)))
                         return true;
-                    else if (endPanel.equals(eastCell.getSouthCell()))
+                    else if (endPanel.equals(eastCell.getSouthCell()) && ((validMoves & (1 << 10)) == (1 << 10)))
                         return true;
                 }
 
                 // south compare
             }
             if (southCell != null) {
-                if (endPanel.equals(southCell))
+                if (endPanel.equals(southCell) && ((validMoves & (1 << 4)) == (1 << 4)))
                     return true;
                 else {
-                    if (endPanel.equals(southCell.getSouthCell()))
+                    if (endPanel.equals(southCell.getSouthCell()) && ((validMoves & (1 << 5)) == (1 << 5)))
                         return true;
-                    else if (endPanel.equals(southCell.getEastCell()))
+                    else if (endPanel.equals(southCell.getEastCell()) && ((validMoves & (1 << 11)) == (1 << 11)))
                         return true;
-                    else if (endPanel.equals(southCell.getWestCell()))
+                    else if (endPanel.equals(southCell.getWestCell()) && ((validMoves & (1 << 12)) == (1 << 12)))
                         return true;
                 }
 
                 // west cell
             }
             if (westCell != null) {
-                if (endPanel.equals(westCell))
+                if (endPanel.equals(westCell) && ((validMoves & (1 << 6)) == (1 << 6)))
                     return true;
                 else {
-                    if (endPanel.equals(westCell.getWestCell()))
+                    if (endPanel.equals(westCell.getWestCell()) && ((validMoves & (1 << 7)) == (1 << 7)))
                         return true;
-                    else if (endPanel.equals(westCell.getNorthCell()))
+                    else if (endPanel.equals(westCell.getNorthCell()) && ((validMoves & (1 << 13)) == (1 << 13)))
                         return true;
-                    else if (endPanel.equals(westCell.getSouthCell()))
+                    else if (endPanel.equals(westCell.getSouthCell()) && ((validMoves & (1 << 14)) == (1 << 14)))
                         return true;
                 }
                 // outside of valid range, described in CellPanel
@@ -118,10 +137,10 @@ class CellPanel extends JPanel {
          * N means unreachable
          * X means base
          * This refers to the bit manipulated
-         * A: Bit 9 accessed by 0, bit 10 accessed by 2
-         * B: Bit 11 accessed by 2, bit 12 accessed by 4
-         * C: Bit 13 accessed by 4, bit 14 accessed by 6
-         * D: Bit 15 accessed by 6, bit 16 accessed by 0
+         * A: Bit 8 accessed by 0, Bit 9 accessed by 2
+         * B: Bit 10 accessed by 2, Bit 11 accessed by 4
+         * C: Bit 12 accessed by 4, Bit 13 accessed by 6
+         * D: Bit 14 accessed by 6, Bit 15 accessed by 0
          *
          * N | N | 1 | N | N
          * N | D | 0 | A | N
@@ -250,6 +269,50 @@ class CellPanel extends JPanel {
      */
     public void setWestCell(CellPanel westCell) {
         this.westCell = westCell;
+    }
+
+    public boolean getNorthWall() {
+        return cellBlock.getNorthWall();
+    }
+
+    public boolean getSouthWall() {
+        return cellBlock.getSouthWall();
+    }
+
+    public boolean getEastWall() {
+        return cellBlock.getEastWall();
+    }
+
+    public boolean getWestWall() {
+        return cellBlock.getWestWall();
+    }
+
+    public void setNorthWall(boolean wall) {
+        cellBlock.setNorthWall(wall);
+        if (northCell != null) {
+            northCell.getBlock().setSouthWall(wall);
+        }
+    }
+
+    public void setSouthWall(boolean wall) {
+        cellBlock.setSouthWall(wall);
+        if (southCell != null) {
+            southCell.getBlock().setNorthWall(wall);
+        }
+    }
+
+    public void setWestWall(boolean wall) {
+        cellBlock.setWestWall(wall);
+        if (westCell != null) {
+            westCell.getBlock().setEastWall(wall);
+        }
+    }
+
+    public void setEastWall(boolean wall) {
+        cellBlock.setEastWall(wall);
+        if (eastCell != null) {
+            eastCell.getBlock().setWestWall(wall);
+        }
     }
 
     @Override

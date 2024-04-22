@@ -7,21 +7,33 @@ public class Player {
     private Piece piece1;
     private Color selfColor;
     private int[][] victoryCells;
+    private String playerName;
 
-    public Player(int[][] pieces, Color selfColor, int[][] victoryCells) {
+    // ONLY FOR DEBUG USE
+    public Player(String playerName) {
+        this.playerName = playerName;
+        this.selfColor = BlockadeGUI.PLAYER1_BGCOLOR;
+    }
+
+    public Player(int[][] pieces, Color selfColor, int[][] victoryCells, String playerName) {
         this.piece0 = new Piece(pieces[0], selfColor);
         this.piece1 = new Piece(pieces[1], selfColor);
         this.selfColor = selfColor;
         this.victoryCells = victoryCells;
+        this.playerName = playerName;
     }
 
-    public boolean hasWon() {
-        boolean winCondition = false;
+    public boolean hasWon(BlockadeGUI game) {
         for (int[] winPositions : victoryCells) {
-            if (piece0.checkWinLocation(winPositions) || piece1.checkWinLocation(winPositions))
-                winCondition = true;
+            if (piece0.checkWinLocation(winPositions, game.GAME_BOARD)
+                    || piece1.checkWinLocation(winPositions, game.GAME_BOARD))
+                return true;
         }
-        return winCondition;
+        return false;
+    }
+
+    public String getPlayerName() {
+        return playerName;
     }
 
     public Piece getPiece(int x, int y) {
