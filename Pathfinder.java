@@ -39,13 +39,13 @@ public class Pathfinder {
 
         return false; // No valid path found
     }
+    
+    private static boolean isBlocked(int x, int y, Board gameBoard) {
+        return gameBoard.getBoardBlock(x, y).isOccupied(); // Check if the block is occupied
+    }
 
     private static boolean isValidPosition(int[] position, int width, int height) {
         return position[0] >= 0 && position[0] < width &&
                 position[1] >= 0 && position[1] < height;
-    }
-
-    private static boolean isBlocked(int x, int y, Board gameBoard) {
-        return BlockadeGUI.GAME_BOARD[x][y].getBlock().isOccupied(); // Check if the block is occupied
     }
 }
