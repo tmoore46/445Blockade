@@ -49,7 +49,7 @@ public class BlockadeGUI extends JFrame {
 
     public CellPanel[][] GAME_BOARD = new CellPanel[GRID_WIDTH][GRID_HEIGHT];
 
-    public BlockadeGUI() {
+    public BlockadeGUI(boolean twoPlayer) {
 
         guiReference = this;
 
@@ -66,7 +66,10 @@ public class BlockadeGUI extends JFrame {
         int[][] player2Spawn = new int[][] { { 10, 3 }, { 10, 7 } };
 
         player1 = new Player(player1Spawn, PLAYER1_BGCOLOR, player2Spawn, "Player 1");
-        player2 = new Player(player2Spawn, PLAYER2_BGCOLOR, player1Spawn, "Player 2");
+        if (twoPlayer)
+            player2 = new Player(player2Spawn, PLAYER2_BGCOLOR, player1Spawn, "Player 2");
+        else
+            player2 = new BlockadeAI(player2Spawn, PLAYER2_BGCOLOR, player1Spawn, "AI", this);
 
         PLAYERS = new Player[] { player1, player2 };
 
@@ -168,71 +171,82 @@ public class BlockadeGUI extends JFrame {
             // clicking a piece
             @Override
             public void mouseClicked(MouseEvent me) {
+                if (me.getButton() == MouseEvent.BUTTON1) {
 
-                hasMouseDragged = false;
+                    hasMouseDragged = false;
 
-                JPanel selectedPanel;
+                    JPanel selectedPanel;
 
-                Object clickedObject = me.getSource();
+                    Object clickedObject = me.getSource();
 
-                Player player = getPlayer();
-                // handle all the cell panel stuff here
-                if (clickedObject instanceof JPanel) {
+                    Player player = getPlayer();
+                    // handle all the cell panel stuff here
+                    if (clickedObject instanceof JPanel) {
 
-                    mouseStartPoint = me.getPoint();
+                        mouseStartPoint = me.getPoint();
 
-                    selectedPanel = (JPanel) clickedObject;
-                    CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(me.getPoint());
+                        selectedPanel = (JPanel) clickedObject;
+                        CellPanel clickedCellPanel = (CellPanel) selectedPanel.getComponentAt(me.getPoint());
 
-                    if (firstClickedCellPanel == null &&
-                            clickedCellPanel.getBlock().isOccupied()
-                            && clickedCellPanel.getBlock().getPieceColor() != null
-                            && !haveMoved) {
-                        if (clickedCellPanel.getBlock().getPieceColor().equals((player.getSelfColor()))) {
-                            // System.out.println("Clicked First");
-                            firstClickedCellPanel = clickedCellPanel;
-                            selectedPiece = player.getPiece(firstClickedCellPanel.getPosX(),
-                                    firstClickedCellPanel.getPosY());
+                        if (firstClickedCellPanel == null &&
+                                clickedCellPanel.getBlock().isOccupied()
+                                && clickedCellPanel.getBlock().getPieceColor() != null
+                                && !haveMoved) {
+                            if (clickedCellPanel.getBlock().getPieceColor().equals((player.getSelfColor()))) {
+                                firstClickedCellPanel = clickedCellPanel;
+                                selectedPiece = player.getPiece(firstClickedCellPanel.getPosX(),
+                                        firstClickedCellPanel.getPosY());
+                                firstClickedCellPanel.setSelected(true);
+                            }
+                        } else if (firstClickedCellPanel != null &&
+                                !clickedCellPanel.getBlock().isOccupied()
+                                && firstClickedCellPanel.isValidMove(clickedCellPanel)
+                                && selectedPiece != null) {
+                            secondClickedCellPanel = clickedCellPanel;
+
+                            repaint();
                         }
-                    } else if (firstClickedCellPanel != null &&
-                            !clickedCellPanel.getBlock().isOccupied()
-                            && firstClickedCellPanel.isValidMove(clickedCellPanel)
-                            && selectedPiece != null) {
-                        // System.out.println("Clicked Second");
-                        secondClickedCellPanel = clickedCellPanel;
+                    }
 
-                        repaint();
+                    if (firstClickedCellPanel != null && secondClickedCellPanel != null) {
+                        selectedPiece.setLocation(secondClickedCellPanel.getPosition());
+
+                        firstClickedCellPanel.getBlock().setPieceColor(null);
+                        secondClickedCellPanel.getBlock().setPieceColor(getPlayer().getSelfColor());
+
+                        firstClickedCellPanel.getBlock().setOccupied(false);
+                        secondClickedCellPanel.getBlock().setOccupied(true);
+
+                        firstClickedCellPanel.setSelected(false);
+
+                        haveMoved = true;
+                        selectedPiece = null;
+                        firstClickedCellPanel = null;
+                        secondClickedCellPanel = null;
+
+                    }
+
+                    if (player.hasWon(guiReference)) {
+                        if (player.equals(player1)) {
+                            new VictoryScreen(player1, guiReference);
+                        } else if (player.equals(player2)) {
+                            new VictoryScreen(player2, guiReference);
+                        } else {
+                            System.err.println("Unknown Player has won?!?!");
+                            System.exit(1);
+                        }
+                    }
+                    nextTurn();
+                }
+
+                if (me.getButton() == MouseEvent.BUTTON2 || me.getButton() == MouseEvent.BUTTON3) {
+                    if (firstClickedCellPanel != null) {
+                        if (firstClickedCellPanel.isSelected()) {
+                            firstClickedCellPanel.setSelected(false);
+                            firstClickedCellPanel = null;
+                        }
                     }
                 }
-
-                if (firstClickedCellPanel != null && secondClickedCellPanel != null) {
-                    // System.out.println("Two positions Clicked");
-                    selectedPiece.setLocation(secondClickedCellPanel.getPosition());
-
-                    firstClickedCellPanel.getBlock().setPieceColor(null);
-                    secondClickedCellPanel.getBlock().setPieceColor(getPlayer().getSelfColor());
-
-                    firstClickedCellPanel.getBlock().setOccupied(false);
-                    secondClickedCellPanel.getBlock().setOccupied(true);
-                    haveMoved = true;
-                    selectedPiece = null;
-                    firstClickedCellPanel = null;
-                    secondClickedCellPanel = null;
-
-                }
-                System.out.println(turnCount);
-                if (player.hasWon(guiReference)) {
-                    System.out.println(getComponents());
-                    if (player.equals(player1)) {
-                        new VictoryScreen(player1, guiReference);
-                    } else if (player.equals(player2)) {
-                        new VictoryScreen(player2, guiReference);
-                    } else {
-                        System.err.println("Unknown Player has won?!?!");
-                        System.exit(1);
-                    }
-                }
-                nextTurn();
 
             }
 
@@ -243,136 +257,138 @@ public class BlockadeGUI extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent me) {
-                if (hasMouseDragged && !havePlacedWall) {
-                    int wallPlacement = wallDirection(mouseStartPoint, mouseEndPoint);
+                if (me.getButton() == MouseEvent.BUTTON1) {
+                    if (hasMouseDragged && !havePlacedWall) {
+                        int wallPlacement = wallDirection(mouseStartPoint, mouseEndPoint);
 
-                    Player player = getPlayer();
+                        Player player = getPlayer();
 
-                    Object wallPlaceObject = me.getSource();
-                    if (wallPlacement != -1 && wallPlaceObject instanceof JPanel) {
-                        boolean validPlacement = false;
+                        Object wallPlaceObject = me.getSource();
+                        if (wallPlacement != -1 && wallPlaceObject instanceof JPanel) {
+                            boolean validPlacement = false;
 
-                        CellPanel placeWallCell = (CellPanel) ((JPanel) wallPlaceObject)
-                                .getComponentAt(mouseStartPoint);
+                            CellPanel placeWallCell = (CellPanel) ((JPanel) wallPlaceObject)
+                                    .getComponentAt(mouseStartPoint);
 
-                        CellPanel northPanel = placeWallCell.getNorthCell();
-                        CellPanel eastPanel = placeWallCell.getEastCell();
-                        CellPanel southPanel = placeWallCell.getSouthCell();
-                        CellPanel westPanel = placeWallCell.getWestCell();
-                        switch (wallPlacement) {
-                            // top side going right
-                            case (1 << 0):
-                                if (eastPanel != null) {
-                                    if (!placeWallCell.getNorthWall() && !eastPanel.getNorthWall()) {
-                                        if (player.placeHWall()) {
-                                            placeWallCell.setNorthWall(true);
-                                            eastPanel.setNorthWall(true);
-                                            validPlacement = true;
+                            CellPanel northPanel = placeWallCell.getNorthCell();
+                            CellPanel eastPanel = placeWallCell.getEastCell();
+                            CellPanel southPanel = placeWallCell.getSouthCell();
+                            CellPanel westPanel = placeWallCell.getWestCell();
+                            switch (wallPlacement) {
+                                // top side going right
+                                case (1 << 0):
+                                    if (eastPanel != null) {
+                                        if (!placeWallCell.getNorthWall() && !eastPanel.getNorthWall()) {
+                                            if (player.placeHWall()) {
+                                                placeWallCell.setNorthWall(true);
+                                                eastPanel.setNorthWall(true);
+                                                validPlacement = true;
+                                            }
                                         }
                                     }
-                                }
-                                break;
-                            // right side going up
-                            case (1 << 1):
-                                if (northPanel != null) {
-                                    if (!placeWallCell.getEastWall() && !northPanel.getEastWall()) {
-                                        if (player.placeVWall()) {
-                                            placeWallCell.setEastWall(true);
-                                            northPanel.setEastWall(true);
-                                            validPlacement = true;
+                                    break;
+                                // right side going up
+                                case (1 << 1):
+                                    if (northPanel != null) {
+                                        if (!placeWallCell.getEastWall() && !northPanel.getEastWall()) {
+                                            if (player.placeVWall()) {
+                                                placeWallCell.setEastWall(true);
+                                                northPanel.setEastWall(true);
+                                                validPlacement = true;
+                                            }
                                         }
                                     }
-                                }
-                                break;
-                            // left side going up
-                            case (1 << 2):
-                                if (northPanel != null) {
-                                    if (!placeWallCell.getWestWall() && !northPanel.getWestWall()) {
-                                        if (player.placeVWall()) {
-                                            placeWallCell.setWestWall(true);
-                                            northPanel.setWestWall(true);
-                                            validPlacement = true;
+                                    break;
+                                // left side going up
+                                case (1 << 2):
+                                    if (northPanel != null) {
+                                        if (!placeWallCell.getWestWall() && !northPanel.getWestWall()) {
+                                            if (player.placeVWall()) {
+                                                placeWallCell.setWestWall(true);
+                                                northPanel.setWestWall(true);
+                                                validPlacement = true;
+                                            }
                                         }
                                     }
-                                }
 
-                                break;
-                            // top side going left
-                            case (1 << 3):
-                                if (westPanel != null) {
-                                    if (!placeWallCell.getNorthWall() && !westPanel.getNorthWall()) {
-                                        if (player.placeHWall()) {
-                                            placeWallCell.setNorthWall(true);
-                                            westPanel.setNorthWall(true);
-                                            validPlacement = true;
+                                    break;
+                                // top side going left
+                                case (1 << 3):
+                                    if (westPanel != null) {
+                                        if (!placeWallCell.getNorthWall() && !westPanel.getNorthWall()) {
+                                            if (player.placeHWall()) {
+                                                placeWallCell.setNorthWall(true);
+                                                westPanel.setNorthWall(true);
+                                                validPlacement = true;
+                                            }
                                         }
                                     }
-                                }
-                                break;
-                            // bottom side going left
-                            case (1 << 4):
-                                if (westPanel != null) {
-                                    if (!placeWallCell.getSouthWall() && !westPanel.getSouthWall()) {
-                                        if (player.placeHWall()) {
-                                            placeWallCell.setSouthWall(true);
-                                            westPanel.setSouthWall(true);
-                                            validPlacement = true;
+                                    break;
+                                // bottom side going left
+                                case (1 << 4):
+                                    if (westPanel != null) {
+                                        if (!placeWallCell.getSouthWall() && !westPanel.getSouthWall()) {
+                                            if (player.placeHWall()) {
+                                                placeWallCell.setSouthWall(true);
+                                                westPanel.setSouthWall(true);
+                                                validPlacement = true;
+                                            }
                                         }
                                     }
-                                }
-                                break;
-                            // left side going down
-                            case (1 << 5):
-                                if (southPanel != null) {
-                                    if (!placeWallCell.getWestWall() && !southPanel.getWestWall()) {
-                                        if (player.placeVWall()) {
-                                            placeWallCell.setWestWall(true);
-                                            southPanel.setWestWall(true);
-                                            validPlacement = true;
+                                    break;
+                                // left side going down
+                                case (1 << 5):
+                                    if (southPanel != null) {
+                                        if (!placeWallCell.getWestWall() && !southPanel.getWestWall()) {
+                                            if (player.placeVWall()) {
+                                                placeWallCell.setWestWall(true);
+                                                southPanel.setWestWall(true);
+                                                validPlacement = true;
+                                            }
                                         }
                                     }
-                                }
-                                break;
-                            // right side going down
-                            case (1 << 6):
-                                if (southPanel != null) {
-                                    if (!placeWallCell.getEastWall() && !southPanel.getEastWall()) {
-                                        if (player.placeVWall()) {
-                                            placeWallCell.setEastWall(true);
-                                            southPanel.setEastWall(true);
-                                            validPlacement = true;
+                                    break;
+                                // right side going down
+                                case (1 << 6):
+                                    if (southPanel != null) {
+                                        if (!placeWallCell.getEastWall() && !southPanel.getEastWall()) {
+                                            if (player.placeVWall()) {
+                                                placeWallCell.setEastWall(true);
+                                                southPanel.setEastWall(true);
+                                                validPlacement = true;
+                                            }
                                         }
                                     }
-                                }
-                                break;
-                            // bottom side going right
-                            case (1 << 7):
-                                if (eastPanel != null) {
-                                    if (!placeWallCell.getSouthWall() && !eastPanel.getSouthWall()) {
-                                        if (player.placeHWall()) {
-                                            placeWallCell.setSouthWall(true);
-                                            eastPanel.setSouthWall(true);
-                                            validPlacement = true;
+                                    break;
+                                // bottom side going right
+                                case (1 << 7):
+                                    if (eastPanel != null) {
+                                        if (!placeWallCell.getSouthWall() && !eastPanel.getSouthWall()) {
+                                            if (player.placeHWall()) {
+                                                placeWallCell.setSouthWall(true);
+                                                eastPanel.setSouthWall(true);
+                                                validPlacement = true;
+                                            }
                                         }
                                     }
-                                }
-                                break;
+                                    break;
 
-                            default:
-                                break;
-                        }
+                                default:
+                                    break;
+                            }
 
-                        if (validPlacement) {
-                            havePlacedWall = true;
-                            updateWalls();
-                            repaint();
+                            if (validPlacement) {
+                                havePlacedWall = true;
+                                updateWalls();
+                                repaint();
+                            }
                         }
                     }
+
+                    nextTurn();
+                    updateWalls();
+
                 }
-
-                nextTurn();
-                updateWalls();
-
             }
 
         });
