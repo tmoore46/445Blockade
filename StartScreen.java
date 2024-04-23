@@ -1,6 +1,12 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class StartScreen extends JFrame {
     public StartScreen() {
@@ -15,16 +21,19 @@ public class StartScreen extends JFrame {
         JLabel title = new JLabel("Welcome to Blockade!");
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JButton onePlayerButton = new JButton("1 Player");
+        JButton onePlayerButton = new JButton("Single Player");
         onePlayerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                BlockadeGUI game = new BlockadeGUI(false);
+                dispose();
             }
         });
 
-        JButton twoPlayersButton = new JButton("2 Players");
+        JButton twoPlayersButton = new JButton("Two Players");
         twoPlayersButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                BlockadeGUI game = new BlockadeGUI(true);
+                dispose();
             }
         });
 
@@ -37,10 +46,6 @@ public class StartScreen extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new StartScreen();
-            }
-        });
+        StartScreen startScreen = new StartScreen();
     }
 }

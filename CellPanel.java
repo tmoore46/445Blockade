@@ -4,8 +4,6 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-import gameplay.Player;
-
 // Custom JPanel for cells
 class CellPanel extends JPanel {
 

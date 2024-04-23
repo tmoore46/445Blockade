@@ -85,4 +85,8 @@ public class Player {
         }
         return false;
     }
+
+    public boolean hasWalls() {
+        return (vWalls > 0 && hWalls > 0);
+    }
 }

@@ -30,6 +30,8 @@ public class BlockadeGUI extends JFrame {
     private boolean haveMoved = false;
     private boolean havePlacedWall = false;
 
+    private boolean twoPlayer = false;
+
     public static final int GRID_WIDTH = 14;
     public static final int GRID_HEIGHT = 11;
 
@@ -50,6 +52,8 @@ public class BlockadeGUI extends JFrame {
     public CellPanel[][] GAME_BOARD = new CellPanel[GRID_WIDTH][GRID_HEIGHT];
 
     public BlockadeGUI(boolean twoPlayer) {
+
+        this.twoPlayer = twoPlayer;
 
         guiReference = this;
 
@@ -258,10 +262,11 @@ public class BlockadeGUI extends JFrame {
             @Override
             public void mouseReleased(MouseEvent me) {
                 if (me.getButton() == MouseEvent.BUTTON1) {
+                    Player player = getPlayer();
+                    if (!player.hasWalls())
+                        havePlacedWall = true;
                     if (hasMouseDragged && !havePlacedWall) {
                         int wallPlacement = wallDirection(mouseStartPoint, mouseEndPoint);
-
-                        Player player = getPlayer();
 
                         Object wallPlaceObject = me.getSource();
                         if (wallPlacement != -1 && wallPlaceObject instanceof JPanel) {
@@ -274,6 +279,7 @@ public class BlockadeGUI extends JFrame {
                             CellPanel eastPanel = placeWallCell.getEastCell();
                             CellPanel southPanel = placeWallCell.getSouthCell();
                             CellPanel westPanel = placeWallCell.getWestCell();
+
                             switch (wallPlacement) {
                                 // top side going right
                                 case (1 << 0):
@@ -283,6 +289,16 @@ public class BlockadeGUI extends JFrame {
                                                 placeWallCell.setNorthWall(true);
                                                 eastPanel.setNorthWall(true);
                                                 validPlacement = true;
+                                                // for (Piece piece : player.getPieces()) {
+                                                // for (int[] victoryCell : player.getVictoryCells()) {
+                                                // if (!Pathfinder.isValidWallPlacement(piece.getLocation(),
+                                                // victoryCell, GAME_BOARD)) {
+                                                // placeWallCell.setNorthWall(false);
+                                                // eastPanel.setNorthWall(false);
+                                                // validPlacement = false;
+                                                // }
+                                                // }
+                                                // }
                                             }
                                         }
                                     }
@@ -295,6 +311,16 @@ public class BlockadeGUI extends JFrame {
                                                 placeWallCell.setEastWall(true);
                                                 northPanel.setEastWall(true);
                                                 validPlacement = true;
+                                                // for (Piece piece : player.getPieces()) {
+                                                // for (int[] victoryCell : player.getVictoryCells()) {
+                                                // if (!Pathfinder.isValidWallPlacement(piece.getLocation(),
+                                                // victoryCell, GAME_BOARD)) {
+                                                // placeWallCell.setEastWall(false);
+                                                // northPanel.setEastWall(false);
+                                                // validPlacement = false;
+                                                // }
+                                                // }
+                                                // }
                                             }
                                         }
                                     }
@@ -307,6 +333,16 @@ public class BlockadeGUI extends JFrame {
                                                 placeWallCell.setWestWall(true);
                                                 northPanel.setWestWall(true);
                                                 validPlacement = true;
+                                                // for (Piece piece : player.getPieces()) {
+                                                // for (int[] victoryCell : player.getVictoryCells()) {
+                                                // if (!Pathfinder.isValidWallPlacement(piece.getLocation(),
+                                                // victoryCell, GAME_BOARD)) {
+                                                // placeWallCell.setWestWall(false);
+                                                // northPanel.setWestWall(false);
+                                                // validPlacement = false;
+                                                // }
+                                                // }
+                                                // }
                                             }
                                         }
                                     }
@@ -320,6 +356,16 @@ public class BlockadeGUI extends JFrame {
                                                 placeWallCell.setNorthWall(true);
                                                 westPanel.setNorthWall(true);
                                                 validPlacement = true;
+                                                // for (Piece piece : player.getPieces()) {
+                                                // for (int[] victoryCell : player.getVictoryCells()) {
+                                                // if (!Pathfinder.isValidWallPlacement(piece.getLocation(),
+                                                // victoryCell, GAME_BOARD)) {
+                                                // placeWallCell.setNorthWall(false);
+                                                // westPanel.setNorthWall(false);
+                                                // validPlacement = false;
+                                                // }
+                                                // }
+                                                // }
                                             }
                                         }
                                     }
@@ -332,6 +378,16 @@ public class BlockadeGUI extends JFrame {
                                                 placeWallCell.setSouthWall(true);
                                                 westPanel.setSouthWall(true);
                                                 validPlacement = true;
+                                                // for (Piece piece : player.getPieces()) {
+                                                // for (int[] victoryCell : player.getVictoryCells()) {
+                                                // if (!Pathfinder.isValidWallPlacement(piece.getLocation(),
+                                                // victoryCell, GAME_BOARD)) {
+                                                // placeWallCell.setSouthWall(false);
+                                                // westPanel.setSouthWall(false);
+                                                // validPlacement = false;
+                                                // }
+                                                // }
+                                                // }
                                             }
                                         }
                                     }
@@ -344,6 +400,16 @@ public class BlockadeGUI extends JFrame {
                                                 placeWallCell.setWestWall(true);
                                                 southPanel.setWestWall(true);
                                                 validPlacement = true;
+                                                // for (Piece piece : player.getPieces()) {
+                                                // for (int[] victoryCell : player.getVictoryCells()) {
+                                                // if (!Pathfinder.isValidWallPlacement(piece.getLocation(),
+                                                // victoryCell, GAME_BOARD)) {
+                                                // placeWallCell.setWestWall(false);
+                                                // southPanel.setWestWall(false);
+                                                // validPlacement = false;
+                                                // }
+                                                // }
+                                                // }
                                             }
                                         }
                                     }
@@ -356,6 +422,16 @@ public class BlockadeGUI extends JFrame {
                                                 placeWallCell.setEastWall(true);
                                                 southPanel.setEastWall(true);
                                                 validPlacement = true;
+                                                // for (Piece piece : player.getPieces()) {
+                                                // for (int[] victoryCell : player.getVictoryCells()) {
+                                                // if (!Pathfinder.isValidWallPlacement(piece.getLocation(),
+                                                // victoryCell, GAME_BOARD)) {
+                                                // placeWallCell.setEastWall(false);
+                                                // southPanel.setEastWall(false);
+                                                // validPlacement = false;
+                                                // }
+                                                // }
+                                                // }
                                             }
                                         }
                                     }
@@ -368,6 +444,16 @@ public class BlockadeGUI extends JFrame {
                                                 placeWallCell.setSouthWall(true);
                                                 eastPanel.setSouthWall(true);
                                                 validPlacement = true;
+                                                // for (Piece piece : player.getPieces()) {
+                                                // for (int[] victoryCell : player.getVictoryCells()) {
+                                                // if (!Pathfinder.isValidWallPlacement(piece.getLocation(),
+                                                // victoryCell, GAME_BOARD)) {
+                                                // placeWallCell.setSouthWall(false);
+                                                // eastPanel.setSouthWall(false);
+                                                // validPlacement = false;
+                                                // }
+                                                // }
+                                                // }
                                             }
                                         }
                                     }
@@ -417,7 +503,12 @@ public class BlockadeGUI extends JFrame {
             turnCount++;
             havePlacedWall = false;
             haveMoved = false;
+            if (!twoPlayer) {
+                ((BlockadeAI) player2).generateTurn();
+                turnCount++;
+            }
         }
+        repaint();
     }
 
     private int wallDirection(Point startPoint, Point endPoint) {
@@ -478,7 +569,7 @@ public class BlockadeGUI extends JFrame {
 
     public static void main(String[] args) {
 
-        BlockadeGUI main = new BlockadeGUI();
+        BlockadeGUI main = new BlockadeGUI(false);
         // SwingUtilities.invokeLater(BlockadeGUI::new);
 
     }
