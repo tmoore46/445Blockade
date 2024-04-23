@@ -10,8 +10,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import gameplay.Player;
-
 public class VictoryScreen extends JFrame {
 
     private static BlockadeGUI gui;
