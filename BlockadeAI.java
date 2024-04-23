@@ -165,221 +165,244 @@ public class BlockadeAI extends Player {
         while (!hasMoved) {
             switch (moveChoice = (1 << random.nextInt(12))) {
                 case SINGLE_UP:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos][yPos - 1])
-                            && previousMove != moveChoice) {
+                    if (yPos > 0) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos][yPos - 1])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos][yPos - 1];
+                            endLocation = gameInterface.GAME_BOARD[xPos][yPos - 1];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos, yPos - 1);
+                            chosenPiece.setLocation(xPos, yPos - 1);
 
-                        hasMoved = true;
-                        previousMove = SINGLE_UP;
+                            hasMoved = true;
+                            previousMove = SINGLE_UP;
+                        }
                     }
                     break;
                 case DOUBLE_UP:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos][yPos - 2])
-                            && previousMove != moveChoice) {
+                    if (yPos > 1) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos][yPos - 2])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos][yPos - 2];
+                            endLocation = gameInterface.GAME_BOARD[xPos][yPos - 2];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos, yPos - 2);
+                            chosenPiece.setLocation(xPos, yPos - 2);
 
-                        hasMoved = true;
-                        previousMove = DOUBLE_UP;
+                            hasMoved = true;
+                            previousMove = DOUBLE_UP;
+                        }
                     }
                     break;
                 case SINGLE_RIGHT:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos + 1][yPos])
-                            && previousMove != moveChoice) {
+                    if (xPos < BlockadeGUI.GRID_WIDTH - 1) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos + 1][yPos])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos + 1][yPos];
+                            endLocation = gameInterface.GAME_BOARD[xPos + 1][yPos];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos + 1, yPos);
+                            chosenPiece.setLocation(xPos + 1, yPos);
 
-                        hasMoved = true;
-                        previousMove = SINGLE_RIGHT;
+                            hasMoved = true;
+                            previousMove = SINGLE_RIGHT;
+                        }
                     }
                     break;
                 case DOUBLE_RIGHT:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos + 2][yPos])
-                            && previousMove != moveChoice) {
+                    if (xPos < BlockadeGUI.GRID_WIDTH - 2) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos + 2][yPos])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos + 2][yPos];
+                            endLocation = gameInterface.GAME_BOARD[xPos + 2][yPos];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos + 2, yPos);
+                            chosenPiece.setLocation(xPos + 2, yPos);
 
-                        hasMoved = true;
-                        previousMove = DOUBLE_RIGHT;
+                            hasMoved = true;
+                            previousMove = DOUBLE_RIGHT;
+                        }
                     }
                     break;
                 case SINGLE_DOWN:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos][yPos + 1])
-                            && previousMove != moveChoice) {
+                    if (yPos < BlockadeGUI.GRID_HEIGHT - 1) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos][yPos + 1])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos][yPos + 1];
+                            endLocation = gameInterface.GAME_BOARD[xPos][yPos + 1];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos, yPos + 1);
+                            chosenPiece.setLocation(xPos, yPos + 1);
 
-                        hasMoved = true;
-                        previousMove = SINGLE_DOWN;
+                            hasMoved = true;
+                            previousMove = SINGLE_DOWN;
+                        }
                     }
                     break;
                 case DOUBLE_DOWN:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos][yPos + 2])
-                            && previousMove != moveChoice) {
+                    if (yPos < BlockadeGUI.GRID_HEIGHT - 2) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos][yPos + 2])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos][yPos + 2];
+                            endLocation = gameInterface.GAME_BOARD[xPos][yPos + 2];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos, yPos + 2);
+                            chosenPiece.setLocation(xPos, yPos + 2);
 
-                        hasMoved = true;
-                        previousMove = DOUBLE_DOWN;
+                            hasMoved = true;
+                            previousMove = DOUBLE_DOWN;
+                        }
                     }
                     break;
                 case SINGLE_LEFT:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos - 1][yPos])
-                            && previousMove != moveChoice) {
+                    if (xPos > 0) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos - 1][yPos])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos - 1][yPos];
+                            endLocation = gameInterface.GAME_BOARD[xPos - 1][yPos];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos - 1, yPos);
+                            chosenPiece.setLocation(xPos - 1, yPos);
 
-                        hasMoved = true;
-                        previousMove = SINGLE_LEFT;
+                            hasMoved = true;
+                            previousMove = SINGLE_LEFT;
+                        }
                     }
                     break;
                 case DOUBLE_LEFT:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos - 2][yPos])
-                            && previousMove != moveChoice) {
+                    if (xPos > 1) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos - 2][yPos])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos - 2][yPos];
+                            endLocation = gameInterface.GAME_BOARD[xPos - 2][yPos];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos - 2, yPos);
+                            chosenPiece.setLocation(xPos - 2, yPos);
 
-                        hasMoved = true;
-                        previousMove = DOUBLE_LEFT;
+                            hasMoved = true;
+                            previousMove = DOUBLE_LEFT;
+                        }
                     }
                     break;
 
                 case UP_RIGHT:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos + 1][yPos - 1])
-                            && previousMove != moveChoice) {
+                    if (xPos < BlockadeGUI.GRID_WIDTH - 1 && yPos > 0) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos + 1][yPos - 1])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos + 1][yPos - 1];
+                            endLocation = gameInterface.GAME_BOARD[xPos + 1][yPos - 1];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos + 1, yPos - 1);
+                            chosenPiece.setLocation(xPos + 1, yPos - 1);
 
-                        hasMoved = true;
-                        previousMove = UP_RIGHT;
+                            hasMoved = true;
+                            previousMove = UP_RIGHT;
+                        }
                     }
                     break;
                 case UP_LEFT:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos - 1][yPos - 1])
-                            && previousMove != moveChoice) {
+                    if (xPos > 0 && yPos > 0) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos - 1][yPos - 1])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos - 1][yPos - 1];
+                            endLocation = gameInterface.GAME_BOARD[xPos - 1][yPos - 1];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos - 1, yPos - 1);
+                            chosenPiece.setLocation(xPos - 1, yPos - 1);
 
-                        hasMoved = true;
-                        previousMove = UP_LEFT;
+                            hasMoved = true;
+                            previousMove = UP_LEFT;
+                        }
                     }
                     break;
                 case DOWN_LEFT:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos - 1][yPos + 1])
-                            && previousMove != moveChoice) {
+                    if (xPos > 0 && yPos < BlockadeGUI.GRID_WIDTH - 1) {
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos - 1][yPos + 1])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos - 1][yPos + 1];
+                            endLocation = gameInterface.GAME_BOARD[xPos - 1][yPos + 1];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos - 1, yPos + 1);
+                            chosenPiece.setLocation(xPos - 1, yPos + 1);
 
-                        hasMoved = true;
-                        previousMove = DOWN_LEFT;
+                            hasMoved = true;
+                            previousMove = DOWN_LEFT;
+                        }
                     }
                     break;
                 case DOWN_RIGHT:
-                    if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos + 1][yPos + 1])
-                            && previousMove != moveChoice) {
+                    if (xPos < BlockadeGUI.GRID_WIDTH - 1 && yPos < BlockadeGUI.GRID_WIDTH - 1)
+                        if (chosenCell.isValidMove(gameInterface.GAME_BOARD[xPos + 1][yPos + 1])
+                                && previousMove != moveChoice) {
 
-                        endLocation = gameInterface.GAME_BOARD[xPos + 1][yPos + 1];
+                            endLocation = gameInterface.GAME_BOARD[xPos + 1][yPos + 1];
 
-                        chosenCell.getBlock().setPieceColor(null);
-                        endLocation.getBlock().setPieceColor(super.getSelfColor());
+                            chosenCell.getBlock().setPieceColor(null);
+                            endLocation.getBlock().setPieceColor(super.getSelfColor());
 
-                        chosenCell.getBlock().setOccupied(false);
-                        endLocation.getBlock().setOccupied(true);
+                            chosenCell.getBlock().setOccupied(false);
+                            endLocation.getBlock().setOccupied(true);
 
-                        chosenPiece.setLocation(xPos + 1, yPos + 1);
+                            chosenPiece.setLocation(xPos + 1, yPos + 1);
 
-                        hasMoved = true;
-                        previousMove = DOWN_RIGHT;
-                    }
+                            hasMoved = true;
+                            previousMove = DOWN_RIGHT;
+                        }
                     break;
 
                 default:
