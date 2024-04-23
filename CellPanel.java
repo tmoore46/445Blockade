@@ -22,6 +22,8 @@ class CellPanel extends JPanel {
     public static final Color CELL_VERTICAL_WALL_COLOR = new Color(2642080);
     public static final short CELL_SIZE = 50;
 
+    private boolean selected;
+
     public CellPanel(Block block, int x, int y) {
         cellBlock = block;
         posX = x;
@@ -365,6 +367,19 @@ class CellPanel extends JPanel {
 
         }
 
+        if (selected) {
+            g.setColor(Color.RED); 
+        } else {
+            g.setColor(Color.WHITE); 
+        }
+    }
+
+    public boolean isSelected(){
+        return selected;
+    }
+
+    public void setSelected(boolean selected){
+        this.selected = selected;
     }
 
     @Override
