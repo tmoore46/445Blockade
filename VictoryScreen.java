@@ -48,8 +48,8 @@ public class VictoryScreen extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 VictoryScreen.gui.dispose();
-                VictoryScreen.gui = new BlockadeGUI();
                 dispose();
+                new StartScreen();
             }
         });
 

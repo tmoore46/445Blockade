@@ -66,7 +66,6 @@ class CellPanel extends JPanel {
      */
     public boolean isValidMove(CellPanel endPanel) {
         int validMoves = reachableCells();
-        System.out.println(reachablePrintout());
         if (cellBlock.isOccupied() && (!endPanel.getBlock().isOccupied()
                 || endPanel.getBlock().getBaseColor().equals(cellBlock.getPieceColor()))) {
 
@@ -356,7 +355,15 @@ class CellPanel extends JPanel {
                 if (player != null) {
                     for (Piece piece : player.getPieces()) {
                         if (piece.locationCheck(posX, posY)) {
-                            g.setColor(piece.getColor());
+                            if (isSelected()) {
+                                if ((System.currentTimeMillis() % 660) > 330)
+                                    g.setColor(Color.RED);
+                                else
+                                    g.setColor(Color.WHITE);
+
+                                repaint();
+                            } else
+                                g.setColor(piece.getColor());
                             g.fillOval((getWidth() - CELL_PIECE_SIZE) / 2,
                                     (getWidth() - CELL_PIECE_SIZE) / 2,
                                     CELL_PIECE_SIZE, CELL_PIECE_SIZE);
@@ -364,21 +371,14 @@ class CellPanel extends JPanel {
                     }
                 }
             }
-
-        }
-
-        if (selected) {
-            g.setColor(Color.RED); 
-        } else {
-            g.setColor(Color.WHITE); 
         }
     }
 
-    public boolean isSelected(){
+    public boolean isSelected() {
         return selected;
     }
 
-    public void setSelected(boolean selected){
+    public void setSelected(boolean selected) {
         this.selected = selected;
     }
 

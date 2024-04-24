@@ -1,19 +1,20 @@
+
 import java.awt.Color;
 
 public class Player {
-    private Integer vWalls = 9;
-    private Integer hWalls = 9;
-    private Piece piece0;
-    private Piece piece1;
-    private Color selfColor;
-    private int[][] victoryCells;
-    private String playerName;
+    protected int vWalls = 9;
+    protected int hWalls = 9;
+    protected Piece piece0;
+    protected Piece piece1;
+    protected Color selfColor;
+    protected int[][] victoryCells;
+    protected String playerName;
 
-    // ONLY FOR DEBUG USE
-    public Player(String playerName) {
-        this.playerName = playerName;
-        this.selfColor = BlockadeGUI.PLAYER1_BGCOLOR;
-    }
+    // // ONLY FOR DEBUG USE
+    // public Player(String playerName) {
+    // this.playerName = playerName;
+    // this.selfColor = BlockadeGUI.PLAYER1_BGCOLOR;
+    // }
 
     public Player(int[][] pieces, Color selfColor, int[][] victoryCells, String playerName) {
         this.piece0 = new Piece(pieces[0], selfColor);
@@ -38,13 +39,6 @@ public class Player {
 
     public Piece getPiece(int x, int y) {
 
-        System.out.print(piece0.getX());
-        System.out.print(", ");
-        System.out.println(piece0.getY());
-        System.out.print(piece1.getX());
-        System.out.print(", ");
-        System.out.println(piece1.getY());
-
         if (piece0.getX() == x && piece0.getY() == y)
             return piece0;
         else if (piece1.getX() == x && piece1.getY() == y)
@@ -64,11 +58,11 @@ public class Player {
         return selfColor;
     }
 
-    public Integer getHWalls() {
+    public int getHWalls() {
         return hWalls;
     }
 
-    public Integer getVWalls() {
+    public int getVWalls() {
         return vWalls;
     }
 
@@ -90,5 +84,9 @@ public class Player {
             return true;
         }
         return false;
+    }
+
+    public boolean hasWalls() {
+        return (vWalls > 0 && hWalls > 0);
     }
 }
