@@ -51,4 +51,26 @@ public class Pathfinder {
         return position[0] >= 0 && position[0] < width && position[1] >= 0 && position[1] < height;
     }
 
+    public static boolean isValidWallPlacement(CellPanel[][] gameBoard) {
+        Player player1 = BlockadeGUI.PLAYERS[0];
+        Player player2 = BlockadeGUI.PLAYERS[1];
+
+        for (Piece piece : player1.getPieces()) {
+            for (int[] victoryCell : player1.getVictoryCells()) {
+                if (!isValidWallPlacement(piece.getLocation(), victoryCell, gameBoard)) {
+                    return false;
+                }
+            }
+        }
+
+        for (Piece piece : player2.getPieces()) {
+            for (int[] victoryCell : player2.getVictoryCells()) {
+                if (!isValidWallPlacement(piece.getLocation(), victoryCell, gameBoard)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
